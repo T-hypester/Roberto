@@ -4,23 +4,53 @@
     <title>Roberto</title>
     <style>
       * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
+      }
+      :root {
+        --z-index-floor: 0;
+        --z-index-dirt: 1;
+        --z-index-walls: 2;
+        --z-index-robot: 10;
+        --z-index-ui: 20;
       }
       html,
       body {
         background: black;
       }
-      .frame {
-        background: black;
-        border-radius: 10px;
-        flex: 1 1 auto;
-        padding: 10px 1em;
+      .layer-floor {
+        z-index: 0;
+      }
+      .layer\:walls {
+        z-index: 2;
+      }
+      .robot {
+        background: white;
+        box-sizing: border-box;
+        color: goldenrod;
+        font: bold 12vmin/16vmin sans-serif;
+        height: 20vmin;
+        border: 1vmin solid black;
+        text-align: center;
+        transform: rotateZ(0grad);
+        transform-origin: 50% 50%;
+        transition-duration: 1s;
+        transition-property: top, left, transform;
+        transition-timing-function: linear;
+        width: 20vmin;
+        white-space: pre;
+        z-index: var(--z-index-robot);
+      }
+      .robot.skin\=brumba {
+        border-radius: 50%;
+      }
+      .robot.skin\=leeto {
+        border-radius: 50% 10% 10% 50%;
       }
       .tile {
         height: 20vmin;
         width: 20vmin;
-        z-index: 1;
       }
       .tile::after {
         background: black;
@@ -34,7 +64,7 @@
         transition: opacity 0.5s linear;
       }
       .tile.dirt {
-        background: rgb(127, 127, 127,1);
+        background: rgb(127, 127, 127, 1);
         transition: background-color 1s ease-in;
       }
       .tile.visited::after {
@@ -43,23 +73,10 @@
       .tile.wall {
         background: sienna;
       }
-      pre.frame {
-        overflow-y: auto;
-      }
-      #main {
-        align-items: stretch;
-        bottom: 0;
-        display: flex;
-        flex-direction: row;
-        gap: 10px;
-        left: 0;
-        padding: 10px;
-        position: absolute;
-        right: 0;
-        top: 0;
-      }
-      #main > * {
-        flex-basis: 50%;
+      .ui {
+        color: lightblue;
+        text-shadow: 0 0 2px black;
+        z-index: var(--z-index-ui);
       }
       #codePanel {
         color: white;
@@ -77,47 +94,58 @@
       #gamePanel {
         flex: 1 1 100%;
       }
-      #moves {
-        color: darkblue;
+      #main {
+        align-items: stretch;
+        bottom: 0;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        left: 0;
+        padding: 10px;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+      #main > * {
+        flex-basis: 50%;
+      }
+      #battery {
         font: bold 40px/1 monospace;
         padding: 20px;
         position: fixed;
         right: 0;
         top: 0;
       }
-      #roberto {
-        background: white;
-        border-radius: 50%;
-        box-sizing: border-box;
-        color: goldenrod;
-        font: bold 12vmin/16vmin sans-serif;
-        height: 20vmin;
-        border: 1vmin solid black;
-        text-align: center;
-        transform: rotateZ(0grad);
-        transform-origin: 50% 50%;
-        transition-duration: 1s;
-        transition-property: top, left, transform;
-        transition-timing-function: linear;
-        width: 20vmin;
-        white-space: pre;
-        z-index: 2;
-      }
       #room {
         background: white;
         position: relative;
-        z-index: 0;
       }
       #room > * {
         position: absolute;
+      }
+      #stats {
+        font: bold 40px/1 monospace;
+        padding: 20px;
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+      #viewport {
+        height: 100vmin;
+        margin: 0 auto;
+        width: 100vmin;
+        overflow: hidden;
       }
     </style>
   </head>
 
   <body>
-    <div id="moves"></div>
-    <div id="room">
-      <pre id="roberto"> : )</pre>
+    <div id="stats" class="ui">0pt</div>
+    <div id="battery" class="ui">100%</div>
+    <div id="viewport">
+      <div id="room">
+        <pre id="roberto" class="robot skin=brumba"> : )</pre>
+      </div>
     </div>
 
     <script>
@@ -133,8 +161,21 @@
         robertino =
         roberto =
           {
+            battery: {
+              capacity: 30,
+              charge: 30,
+              use(amt = 0.1) {
+                if (this.charge <= 0) {
+                  const roberto = document.getElementById("roberto");
+                  roberto.classList.add("battery");
+                  tino.emote("X(");
+                  throw new Error("No Battery! X(");
+                }
+                this.charge = Math.max(this.charge - amt, 0);
+              },
+            },
             direction: 100,
-            moves: 0,
+            dust: 0,
             position: [1, 1],
             rotation: 100,
             emote(text) {
@@ -142,24 +183,26 @@
               const glyph = tino.innerText;
               if (text == glyph) return;
               tino.innerText = text;
-              setTimeout(() => {
-                tino.innerHTML = glyph;
-              }, 500);
+              if (this.battery.charge > 0)
+                setTimeout(() => {
+                  tino.innerHTML = glyph;
+                }, 500);
             },
             rotate(side) {
+              this.battery.use();
               switch (side) {
                 case LEFT:
                 case RIGHT:
                   this.rotation += side;
                   break;
               }
-              this.direction = (this.rotation+400) % 400;
-              this.look()
-              this.moves++;
+              this.direction = (this.rotation + 400) % 400;
+              this.look();
               const roberto = document.getElementById("roberto");
               roberto.style.transform = `rotateZ(${this.rotation - 100}grad)`;
             },
             look() {
+              this.battery.use();
               const position = [...this.position];
               const north = document.querySelector(
                 `.x${position[0]}.y${position[1] - 1}`
@@ -187,6 +230,7 @@
               }
             },
             move(direction) {
+              this.battery.use();
               const amount = direction == BACK ? -1 : +1;
               const newPosition = [...this.position];
               switch ((this.direction + 400) % 400) {
@@ -203,14 +247,14 @@
                   newPosition[0] = this.position[0] - amount;
                   break;
               }
-              this.moves++;
               if (level[newPosition[1]][newPosition[0]] < 0) {
                 this.emote("X0");
-                throw new Error("BUMP!");
+                throw new Error("BUMP! XO");
               }
               this.position = newPosition;
               this.look();
               setTimeout(() => {
+                this.dust += level[newPosition[1]][newPosition[0]] * 10
                 level[newPosition[1]][newPosition[0]] = 0;
               }, 500);
             },
@@ -249,7 +293,7 @@
       });
 
       render();
-      tino.look()
+      tino.look();
       function render() {
         const room = document.getElementById("room");
         room.style.height = `${level.length * 20}vmin`;
@@ -278,13 +322,21 @@
         const roberto = document.getElementById("roberto");
         roberto.style.left = `${tino.position[0] * 20}vmin`;
         roberto.style.top = `${tino.position[1] * 20}vmin`;
-        const rect = roberto.getBoundingClientRect()
-        const dX = rect.left - window.innerWidth + rect.right
-        const dY = rect.top - window.innerHeight + rect.bottom
-        window.scrollBy(dX / 20, dY / 20)
 
-        const moves = document.getElementById("moves");
-        moves.innerText = tino.moves;
+        const rect = roberto.getBoundingClientRect();
+        const dX = rect.left - window.innerWidth + rect.right;
+        const dY = rect.top - window.innerHeight + rect.bottom;
+
+        const viewport = document.getElementById("viewport");
+        viewport.scrollBy(dX / 10, dY / 10);
+
+        const battery = document.getElementById("battery");
+        with (tino.battery) {
+          battery.innerText = `${((charge * 100) / capacity).toFixed(0)}%`;
+        }
+
+        const points = document.getElementById("stats");
+        points.innerText = `${tino.dust.toFixed(0)}pt`
 
         requestAnimationFrame(render);
       }
