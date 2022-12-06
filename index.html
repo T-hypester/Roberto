@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Roberto</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        background: black;
+      }
+      .frame {
+        background: black;
+        border-radius: 10px;
+        flex: 1 1 auto;
+        padding: 10px 1em;
+      }
+      .tile {
+        height: 20vmin;
+        width: 20vmin;
+        z-index: 1;
+      }
+      .tile::after {
+        background: black;
+        bottom: 0;
+        content: "";
+        left: 0;
+        opacity: 1;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: opacity 0.5s linear;
+      }
+      .tile.dirt {
+        background: rgb(127, 127, 127,1);
+        transition: background-color 1s ease-in;
+      }
+      .tile.visited::after {
+        opacity: 0;
+      }
+      .tile.wall {
+        background: sienna;
+      }
+      pre.frame {
+        overflow-y: auto;
+      }
+      #main {
+        align-items: stretch;
+        bottom: 0;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        left: 0;
+        padding: 10px;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+      #main > * {
+        flex-basis: 50%;
+      }
+      #codePanel {
+        color: white;
+        display: flex;
+        flex: 0 0 40em;
+        flex-direction: column;
+        font-family: monospace;
+        gap: 10px;
+      }
+      #codePanel > * {
+        display: flex;
+        flex-basis: 50%;
+        flex-direction: column;
+      }
+      #gamePanel {
+        flex: 1 1 100%;
+      }
+      #moves {
+        color: darkblue;
+        font: bold 40px/1 monospace;
+        padding: 20px;
+        position: fixed;
+        right: 0;
+        top: 0;
+      }
+      #roberto {
+        background: white;
+        border-radius: 50%;
+        box-sizing: border-box;
+        color: goldenrod;
+        font: bold 12vmin/16vmin sans-serif;
+        height: 20vmin;
+        border: 1vmin solid black;
+        text-align: center;
+        transform: rotateZ(0grad);
+        transform-origin: 50% 50%;
+        transition-duration: 1s;
+        transition-property: top, left, transform;
+        transition-timing-function: linear;
+        width: 20vmin;
+        white-space: pre;
+        z-index: 2;
+      }
+      #room {
+        background: white;
+        position: relative;
+        z-index: 0;
+      }
+      #room > * {
+        position: absolute;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="moves"></div>
+    <div id="room">
+      <pre id="roberto"> : )</pre>
+    </div>
+
+    <script>
+      const NORTH = 0;
+      const EAST = 100;
+      const SOUTH = 200;
+      const WEST = 300;
+      const LEFT = -100;
+      const FORWARD = 0;
+      const RIGHT = 100;
+      const BACK = 0;
+      tino =
+        robertino =
+        roberto =
+          {
+            direction: 100,
+            moves: 0,
+            position: [1, 1],
+            rotation: 100,
+            emote(text) {
+              const tino = document.getElementById("roberto");
+              const glyph = tino.innerText;
+              if (text == glyph) return;
+              tino.innerText = text;
+              setTimeout(() => {
+                tino.innerHTML = glyph;
+              }, 500);
+            },
+            rotate(side) {
+              switch (side) {
+                case LEFT:
+                case RIGHT:
+                  this.rotation += side;
+                  break;
+              }
+              this.direction = (this.rotation+400) % 400;
+              this.look()
+              this.moves++;
+              const roberto = document.getElementById("roberto");
+              roberto.style.transform = `rotateZ(${this.rotation - 100}grad)`;
+            },
+            look() {
+              const position = [...this.position];
+              const north = document.querySelector(
+                `.x${position[0]}.y${position[1] - 1}`
+              );
+              if (north && [0, 100, 300].includes(this.direction)) {
+                north.classList.add("visited");
+              }
+              const east = document.querySelector(
+                `.x${position[0] + 1}.y${position[1]}`
+              );
+              if (east && [0, 100, 200].includes(this.direction)) {
+                east.classList.add("visited");
+              }
+              const south = document.querySelector(
+                `.x${position[0]}.y${position[1] + 1}`
+              );
+              if (south && [100, 200, 300].includes(this.direction)) {
+                south.classList.add("visited");
+              }
+              const west = document.querySelector(
+                `.x${position[0] - 1}.y${position[1]}`
+              );
+              if (west && [0, 200, 300].includes(this.direction)) {
+                west.classList.add("visited");
+              }
+            },
+            move(direction) {
+              const amount = direction == BACK ? -1 : +1;
+              const newPosition = [...this.position];
+              switch ((this.direction + 400) % 400) {
+                case NORTH:
+                  newPosition[1] = this.position[1] - amount;
+                  break;
+                case EAST:
+                  newPosition[0] = this.position[0] + amount;
+                  break;
+                case SOUTH:
+                  newPosition[1] = this.position[1] + amount;
+                  break;
+                case WEST:
+                  newPosition[0] = this.position[0] - amount;
+                  break;
+              }
+              this.moves++;
+              if (level[newPosition[1]][newPosition[0]] < 0) {
+                this.emote("X0");
+                throw new Error("BUMP!");
+              }
+              this.position = newPosition;
+              this.look();
+              setTimeout(() => {
+                level[newPosition[1]][newPosition[0]] = 0;
+              }, 500);
+            },
+          };
+
+      level = [
+        [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+        [-1, 0.9, 0.7, +1, -1, +1, +1, +1, +1, +1, +1, 0.9, -1],
+        [-1, 0.8, 0.6, 0.6, -1, +1, +1, +1, +1, +1, +1, +1, -1],
+        [-1, 0.7, 0.5, 0.5, -1, +1, +1, +1, -1, +1, +1, +1, -1],
+        [-1, 0.6, 0.5, 0.9, 0.8, +1, +1, +1, +1, +1, +1, +1, -1],
+        [-1, 0.5, 0.4, 0.6, 0.7, +1, +1, +1, +1, +1, +1, +1, -1],
+        [-1, 0.6, 0.5, 0.4, -1, +1, +1, 0.2, -1, -1, 0.3, 0.4, -1],
+        [-1, 0.7, 0.6, 0.5, +1, +1, +1, 0.2, -1, 0.7, 0.6, 0.5, -1],
+        [-1, 0.9, 0.1, 0.2, 0.3, 0.4, 0.4, 0.2, 0.3, 0.5, 0.7, 0.8, -1],
+        [-1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.2, 0.3, 0.4, 0.8, 0.9, -1],
+        [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+      ];
+
+      window.addEventListener("keydown", (e) => {
+        e.preventDefault();
+        switch (e.key) {
+          case "ArrowRight":
+            tino.rotate(RIGHT);
+            break;
+          case "ArrowLeft":
+            tino.rotate(LEFT);
+            break;
+          case "ArrowUp":
+            tino.move();
+            break;
+          case "ArrowDown":
+            tino.move(BACK);
+            break;
+        }
+      });
+
+      render();
+      tino.look()
+      function render() {
+        const room = document.getElementById("room");
+        room.style.height = `${level.length * 20}vmin`;
+        room.style.width = `${level[0].length * 20}vmin`;
+
+        for (const y in level) {
+          const row = level[y];
+          for (const x in row) {
+            const value = row[x];
+            let tile = document.querySelector(`.tile.x${x}.y${y}`);
+            if (!tile) {
+              tile = document.createElement("div");
+              tile.classList.add("tile", `x${x}`, `y${y}`);
+              room.appendChild(tile);
+            }
+            if (value >= 0) {
+              tile.classList.add("dirt");
+              tile.style.background = `rgba(127,127,127,${value})`;
+            }
+            if (value < 0) tile.classList.add("wall");
+            tile.style.left = `${x * 20}vmin`;
+            tile.style.top = `${y * 20}vmin`;
+          }
+        }
+
+        const roberto = document.getElementById("roberto");
+        roberto.style.left = `${tino.position[0] * 20}vmin`;
+        roberto.style.top = `${tino.position[1] * 20}vmin`;
+        const rect = roberto.getBoundingClientRect()
+        const dX = rect.left - window.innerWidth + rect.right
+        const dY = rect.top - window.innerHeight + rect.bottom
+        window.scrollBy(dX / 20, dY / 20)
+
+        const moves = document.getElementById("moves");
+        moves.innerText = tino.moves;
+
+        requestAnimationFrame(render);
+      }
+    </script>
+  </body>
+</html>
