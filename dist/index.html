@@ -2,6 +2,8 @@
 <html>
   <head>
     <title>Roberto</title>
+    <link rel="icon" href="icons/r.png" type="image/png" />
+    <link rel="manifest" href="roberto.webmanifest" />
   </head>
   <body>
     <h1>Le avventure di Roberto, il robot esperto</h1>
@@ -16,5 +18,14 @@
       </select>
       <button type="submit">Play</button>
     </form>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("sw.js")
+          .then(() => {
+            console.log("Service Worker Registered");
+          });
+      }
+    </script>
   </body>
 </html>

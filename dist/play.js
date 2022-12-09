@@ -156,6 +156,8 @@ function play(level) {
           if (tile >= 0) {
             this.dustbox.amount += 0.1;
             level[y][x] = tile;
+          } else {
+            level[y][x] = 0;
           }
         },
       };
