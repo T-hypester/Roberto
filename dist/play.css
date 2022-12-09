@@ -1,0 +1,144 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --z-index-floor: 0;
+  --z-index-dirt: 1;
+  --z-index-walls: 2;
+  --z-index-robot: 10;
+  --z-index-ui: 20;
+  background: black;
+}
+
+body .ui {
+  visibility: hidden;
+}
+
+body #viewport {
+  visibility: hidden;
+}
+
+body.status\=playing .ui {
+  visibility: visible;
+}
+body.status\=playing #viewport {
+  visibility: visible;
+}
+
+.layer-floor {
+  z-index: 0;
+}
+.layer\:walls {
+  z-index: 2;
+}
+
+.robot {
+  height: 20vmin;
+  transform: rotateZ(0grad);
+  transform-origin: 50% 50%;
+  transition-duration: 1s;
+  transition-property: top, left, transform;
+  transition-timing-function: linear;
+  width: 20vmin;
+  z-index: var(--z-index-robot);
+}
+
+.tile {
+  height: 20vmin;
+  width: 20vmin;
+}
+.tile::after {
+  background: black;
+  bottom: 0;
+  content: "";
+  left: 0;
+  opacity: 1;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity 0.5s linear;
+}
+.tile.dirt {
+  background: rgb(127, 127, 127, 1);
+  transition: background-color 1s ease-in;
+}
+.tile.visited::after {
+  opacity: 0;
+}
+.tile.wall {
+  background: sienna;
+}
+
+.ui {
+  color: lightblue;
+  text-shadow: 0 0 2px black;
+  z-index: var(--z-index-ui);
+}
+
+#codePanel {
+  color: white;
+  display: flex;
+  flex: 0 0 40em;
+  flex-direction: column;
+  font-family: monospace;
+  gap: 10px;
+}
+#codePanel > * {
+  display: flex;
+  flex-basis: 50%;
+  flex-direction: column;
+}
+
+#gamePanel {
+  flex: 1 1 100%;
+}
+
+#main {
+  align-items: stretch;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  left: 0;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+#main > * {
+  flex-basis: 50%;
+}
+
+#battery {
+  font: bold 40px/1 monospace;
+  padding: 20px;
+  position: fixed;
+  right: 0;
+  top: 0;
+}
+
+#room {
+  background: white;
+  position: relative;
+}
+#room > * {
+  position: absolute;
+}
+
+#stats {
+  font: bold 40px/1 monospace;
+  padding: 20px;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+#viewport {
+  height: 100vmin;
+  margin: 0 auto;
+  width: 100vmin;
+  overflow: hidden;
+}
