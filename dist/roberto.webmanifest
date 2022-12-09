@@ -1,15 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "background_color": "black",
+  "description": "Le avventure di Roberto, il robot esperto",
+  "display": "fullscreen",
   "name": "Roberto",
   "short_name": "Roberto",
   "start_url": ".",
-  "display": "fullscreen",
-  "background_color": "blue",
-  "description": "Le avventure di Roberto, il robot esperto",
+  "theme_color": "orange",
   "icons": [
     {
       "src": "icons/r.png",
-      "type": "image/png"
+      "type": "image/png",
+      "sizes": "192x192 512x512"
     }
   ]
 }

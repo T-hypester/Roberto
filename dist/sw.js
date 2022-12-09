@@ -1,7 +1,9 @@
+const CACHE_NAME = 'roberto'
+
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches
-      .open("fox-store")
+      .open(CACHE_NAME)
       .then((cache) =>
         cache.addAll([
           "index.html",
