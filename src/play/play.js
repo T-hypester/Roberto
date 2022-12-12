@@ -223,20 +223,28 @@ function play(level) {
       const row = level[y];
       for (const x in row) {
         const value = row[x];
-        let tile = document.querySelector(`.tile.x${x}.y${y}`);
-        if (!tile) {
-          tile = document.createElement("div");
-          tile.classList.add("tile", `x${x}`, `y${y}`);
-          room.appendChild(tile);
-        }
-
+        const tile =
+          document.querySelector(`.tile.x${x}.y${y}`) ||
+          createTile(x, y, value);
         if (value > 0) tile.classList.add("dirt");
         else tile.classList.remove("dirt");
-
-        if (value < 0) tile.classList.add("wall");
-        tile.style.left = `${x * 20}vmin`;
-        tile.style.top = `${y * 20}vmin`;
       }
+    }
+
+    function createTile(x, y, value) {
+      const tile = document.createElement("div");
+      tile.classList.add("tile", `x${x}`, `y${y}`);
+      tile.style.left = `${x * 20}vmin`;
+      tile.style.top = `${y * 20}vmin`;
+
+      if (value >= 0)
+        tile.style.backgroundPositionY = `${
+          Math.floor(Math.random() * 5) * 20 - 1
+        }px`;
+      else tile.classList.add("wall");
+
+      room.appendChild(tile);
+      return tile;
     }
   }
 }

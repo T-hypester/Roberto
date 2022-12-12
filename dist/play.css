@@ -53,9 +53,7 @@ body.status\=playing #viewport {
 }
 
 .tile {
-  background-image: url(textures/floor.png);
-  background-size: contain;
-  background-repeat: repeat;
+  background: -4px 0/106% 100% url(textures/floor.png) repeat;
   height: 20vmin;
   width: 20vmin;
   z-index: var(--z-index-floor);
@@ -72,7 +70,10 @@ body.status\=playing #viewport {
   transition: opacity 0.5s linear;
 }
 .tile::before {
-  background: rgb(127,127,127, 0.85);
+  background: 4% 6%/51% 49% radial-gradient(grey, transparent) no-repeat,
+    12% 78%/49% 46% radial-gradient(grey, transparent) no-repeat,
+    100% 100%/41% 51% radial-gradient(grey, transparent) no-repeat,
+    100% 1%/49% 51% radial-gradient(grey, transparent) no-repeat;
   bottom: 0;
   content: "";
   left: 0;
@@ -93,9 +94,7 @@ body.status\=playing #viewport {
   opacity: 0;
 }
 .tile.wall {
-  background-image: url(textures/cassandra-brown-brickwork-1.jpeg);
-  background-size: contain;
-  background-repeat: repeat;
+  background: 0 0/contain url(textures/cassandra-brown-brickwork-1.jpeg) repeat;
   border-radius: 3px;
   z-index: var(--z-index-surface);
 }
@@ -149,7 +148,6 @@ body.status\=playing #viewport {
 }
 
 #room {
-  background: white;
   position: relative;
 }
 #room > * {
