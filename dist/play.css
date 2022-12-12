@@ -6,10 +6,10 @@
 
 :root {
   --z-index-floor: 0;
-  --z-index-dirt: 1;
-  --z-index-walls: 2;
-  --z-index-robot: 10;
-  --z-index-ui: 20;
+  --z-index-surface: 1;
+  --z-index-bots: 2;
+  --z-index-over: 3;
+  --z-index-ui: 10;
   background: black;
 }
 
@@ -28,11 +28,17 @@ body.status\=playing #viewport {
   visibility: visible;
 }
 
-.layer-floor {
-  z-index: 0;
+.layer\:floor {
+  z-index: var(--z-index-floor);
 }
-.layer\:walls {
-  z-index: 2;
+.layer\:surface {
+  z-index: var(--z-index-surface);
+}
+.layer\:bots {
+  z-index: var(--z-index-bots);
+}
+.layer\:over {
+  z-index: var(--z-index-over);
 }
 
 .robot {
@@ -43,12 +49,16 @@ body.status\=playing #viewport {
   transition-property: top, left, transform;
   transition-timing-function: linear;
   width: 20vmin;
-  z-index: var(--z-index-robot);
+  z-index: var(--z-index-bots);
 }
 
 .tile {
+  background-image: url(textures/floor.png);
+  background-size: contain;
+  background-repeat: repeat;
   height: 20vmin;
   width: 20vmin;
+  z-index: var(--z-index-floor);
 }
 .tile::after {
   background: black;
@@ -61,15 +71,33 @@ body.status\=playing #viewport {
   top: 0;
   transition: opacity 0.5s linear;
 }
+.tile::before {
+  background: rgb(127,127,127, 0.85);
+  bottom: 0;
+  content: "";
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity 1s ease-in;
+}
 .tile.dirt {
-  background: rgb(127, 127, 127, 1);
   transition: background-color 1s ease-in;
+  z-index: var(--z-index-surface);
+}
+.tile.dirt::before {
+  opacity: 1;
 }
 .tile.visited::after {
   opacity: 0;
 }
 .tile.wall {
-  background: sienna;
+  background-image: url(textures/cassandra-brown-brickwork-1.jpeg);
+  background-size: contain;
+  background-repeat: repeat;
+  border-radius: 3px;
+  z-index: var(--z-index-surface);
 }
 
 .ui {

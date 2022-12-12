@@ -29,7 +29,6 @@ class Input {
     run() {
         if (this.robot.moving)
             return;
-        console.dir(this.input);
         const dir = this.input;
         this.input = undefined;
         if (!dir)
@@ -245,10 +244,10 @@ function play(level) {
                     tile.classList.add("tile", `x${x}`, `y${y}`);
                     room.appendChild(tile);
                 }
-                if (value >= 0) {
+                if (value > 0)
                     tile.classList.add("dirt");
-                    tile.style.background = `rgba(127,127,127,${value})`;
-                }
+                else
+                    tile.classList.remove("dirt");
                 if (value < 0)
                     tile.classList.add("wall");
                 tile.style.left = `${x * 20}vmin`;

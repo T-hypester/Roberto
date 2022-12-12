@@ -229,10 +229,10 @@ function play(level) {
           tile.classList.add("tile", `x${x}`, `y${y}`);
           room.appendChild(tile);
         }
-        if (value >= 0) {
-          tile.classList.add("dirt");
-          tile.style.background = `rgba(127,127,127,${value})`;
-        }
+
+        if (value > 0) tile.classList.add("dirt");
+        else tile.classList.remove("dirt");
+
         if (value < 0) tile.classList.add("wall");
         tile.style.left = `${x * 20}vmin`;
         tile.style.top = `${y * 20}vmin`;
