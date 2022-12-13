@@ -12,6 +12,8 @@
   --z-index-fow: 9;
   --z-index-ui: 10;
   background: black;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 body .ui {
@@ -86,10 +88,6 @@ body.status\=playing #viewport {
   z-index: var(--z-index-surface);
 }
 .tile > .dirt {
-  background: 4% 6%/51% 49% radial-gradient(grey, transparent) no-repeat,
-    12% 78%/49% 46% radial-gradient(grey, transparent) no-repeat,
-    100% 100%/41% 51% radial-gradient(grey, transparent) no-repeat,
-    100% 1%/49% 51% radial-gradient(grey, transparent) no-repeat;
   opacity: 0;
   transition: opacity 1s ease-out;
 }
@@ -99,6 +97,8 @@ body.status\=playing #viewport {
 
 .ui {
   color: lightblue;
+  font: bold 40px/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   text-shadow: 0 0 2px black;
   z-index: var(--z-index-ui);
 }
@@ -108,24 +108,6 @@ body.status\=playing #viewport {
     repeat;
   border-radius: 3px;
   z-index: var(--z-index-surface);
-}
-
-#codePanel {
-  color: white;
-  display: flex;
-  flex: 0 0 40em;
-  flex-direction: column;
-  font-family: monospace;
-  gap: 10px;
-}
-#codePanel > * {
-  display: flex;
-  flex-basis: 50%;
-  flex-direction: column;
-}
-
-#gamePanel {
-  flex: 1 1 100%;
 }
 
 #main {
@@ -145,7 +127,6 @@ body.status\=playing #viewport {
 }
 
 #battery {
-  font: bold 40px/1 monospace;
   padding: 20px;
   position: fixed;
   right: 0;
@@ -160,7 +141,6 @@ body.status\=playing #viewport {
 }
 
 #stats {
-  font: bold 40px/1 monospace;
   padding: 20px;
   position: fixed;
   left: 0;

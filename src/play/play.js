@@ -260,21 +260,24 @@ function play(level) {
       tile.appendChild(dirt);
       tile.classList.add("dirty");
 
-      return dirt;
-      /* tile.style.background = [
+      dirt.style.background = [
         [0, 0],
         [100, 0],
         [0, 100],
         [100, 100],
       ]
-        .map(([x, y]) => {
+        .map(([bx, by]) => {
           with (Math) {
-            const width = floor(random() * 10 - 5) + 50;
-            const height = floor(random() * 10 - 5) + 50;
+            const x = floor(random() * 10) - 5 + bx;
+            const y = floor(random() * 10) - 5 + by;
+            const width = floor(random() * 20) - 10 + 50;
+            const height = floor(random() * 20) - 10 + 50;
             return `${x}% ${y}%/${width}% ${height}% radial-gradient(grey, transparent) no-repeat`;
           }
         })
-        .join(","); */
+        .join(",");
+
+      return dirt;
     }
   }
 }
