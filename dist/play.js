@@ -136,22 +136,22 @@ function play(level) {
                     look() {
                         const position = [...this.position];
                         const self = document.querySelector(`.x${position[0]}.y${position[1]}`);
-                        self.classList.add("visited");
+                        self.classList.remove("fow");
                         const north = document.querySelector(`.x${position[0]}.y${position[1] - 1}`);
                         if (north && [0, 100, 300].includes(this.direction)) {
-                            north.classList.add("visited");
+                            north.classList.remove("fow");
                         }
                         const east = document.querySelector(`.x${position[0] + 1}.y${position[1]}`);
                         if (east && [0, 100, 200].includes(this.direction)) {
-                            east.classList.add("visited");
+                            east.classList.remove("fow");
                         }
                         const south = document.querySelector(`.x${position[0]}.y${position[1] + 1}`);
                         if (south && [100, 200, 300].includes(this.direction)) {
-                            south.classList.add("visited");
+                            south.classList.remove("fow");
                         }
                         const west = document.querySelector(`.x${position[0] - 1}.y${position[1]}`);
                         if (west && [0, 200, 300].includes(this.direction)) {
-                            west.classList.add("visited");
+                            west.classList.remove("fow");
                         }
                     },
                     move(amount = Input.FORWARD) {
@@ -250,11 +250,13 @@ function play(level) {
             if (tile)
                 return tile;
             tile = document.createElement("div");
-            tile.classList.add("tile", `x${x}`, `y${y}`);
+            tile.classList.add("tile", `x${x}`, `y${y}`, "fow");
             tile.style.left = `${x * 20}vmin`;
             tile.style.top = `${y * 20}vmin`;
-            if (value >= 0)
+            if (value >= 0) {
+                tile.classList.add("floor");
                 tile.style.backgroundPositionY = `${Math.floor(Math.random() * 5) * 20 - 1}px`;
+            }
             else
                 tile.classList.add("wall");
             room.appendChild(tile);

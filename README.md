@@ -2,8 +2,11 @@ Le avventure di Roberto, il robot esperto
 ==========================================
 **(The adventures of Rob, the rad robot)**
 
-Demo
-----
+![Screenshot of the game](media/screenshot.png)
+
+
+Online demo
+-----------
 
 [Here](https://t-hypester.github.io/Roberto/dist/)
 
@@ -11,6 +14,8 @@ Demo
 Quick start
 -----------
 
-Run `yarn` and `yarn serve`.
+Pick your method:
 
-Or just open the stupid _index.html_.
+- Lazy & buggy: `yarn serve`
+- Quick & dirty: open `dist/index.html`.
+- Slow & elegant: use VSCode's Live Server extension

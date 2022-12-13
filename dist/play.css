@@ -42,6 +42,11 @@ body.status\=playing #viewport {
   z-index: var(--z-index-over);
 }
 
+.floor {
+  background: -4px 0/106% 100% url(textures/floor.png) repeat;
+  z-index: var(--z-index-floor);
+}
+
 .robot {
   height: 20vmin;
   transform: rotateZ(0grad);
@@ -54,52 +59,21 @@ body.status\=playing #viewport {
 }
 
 .tile {
-  background: -4px 0/106% 100% url(textures/floor.png) repeat;
+  display: block;
   height: 20vmin;
-  width: 20vmin;
-  z-index: var(--z-index-floor);
-}
-.tile::after {
-  background: black;
-  bottom: 0;
-  content: "";
-  left: 0;
   opacity: 1;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: opacity 0.5s linear;
-  z-index: var(--z-index-fow);
+  transition: opacity 1s ease-out;
+  width: 20vmin;
 }
-/* .tile::before {
-  background: 4% 6%/51% 49% radial-gradient(grey, transparent) no-repeat,
-    12% 78%/49% 46% radial-gradient(grey, transparent) no-repeat,
-    100% 100%/41% 51% radial-gradient(grey, transparent) no-repeat,
-    100% 1%/49% 51% radial-gradient(grey, transparent) no-repeat;
-  bottom: 0;
-  content: "";
-  left: 0;
-  opacity: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: opacity 1s ease-in;
-  z-index: var(--z-index-surface);
-} */
 .tile.dirty {
   transition: background-color 1s ease-out;
 }
 .tile.dirty::before {
   opacity: 1;
 }
-.tile.visited::after {
+.tile.fow {
+  content-visibility: hidden;
   opacity: 0;
-}
-.tile.wall {
-  background: 0 0 / contain url(textures/cassandra-brown-brickwork-1.jpeg)
-    repeat;
-  border-radius: 3px;
-  z-index: var(--z-index-surface);
 }
 
 .tile > * {
@@ -111,7 +85,6 @@ body.status\=playing #viewport {
   top: 0;
   z-index: var(--z-index-surface);
 }
-
 .tile > .dirt {
   background: 4% 6%/51% 49% radial-gradient(grey, transparent) no-repeat,
     12% 78%/49% 46% radial-gradient(grey, transparent) no-repeat,
@@ -128,6 +101,13 @@ body.status\=playing #viewport {
   color: lightblue;
   text-shadow: 0 0 2px black;
   z-index: var(--z-index-ui);
+}
+
+.wall {
+  background: 0 0 / contain url(textures/cassandra-brown-brickwork-1.jpeg)
+    repeat;
+  border-radius: 3px;
+  z-index: var(--z-index-surface);
 }
 
 #codePanel {
