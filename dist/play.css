@@ -9,6 +9,7 @@
   --z-index-surface: 1;
   --z-index-bots: 2;
   --z-index-over: 3;
+  --z-index-fow: 9;
   --z-index-ui: 10;
   background: black;
 }
@@ -68,8 +69,9 @@ body.status\=playing #viewport {
   right: 0;
   top: 0;
   transition: opacity 0.5s linear;
+  z-index: var(--z-index-fow);
 }
-.tile::before {
+/* .tile::before {
   background: 4% 6%/51% 49% radial-gradient(grey, transparent) no-repeat,
     12% 78%/49% 46% radial-gradient(grey, transparent) no-repeat,
     100% 100%/41% 51% radial-gradient(grey, transparent) no-repeat,
@@ -82,21 +84,44 @@ body.status\=playing #viewport {
   right: 0;
   top: 0;
   transition: opacity 1s ease-in;
-}
-.tile.dirt {
-  transition: background-color 1s ease-in;
   z-index: var(--z-index-surface);
+} */
+.tile.dirty {
+  transition: background-color 1s ease-out;
 }
-.tile.dirt::before {
+.tile.dirty::before {
   opacity: 1;
 }
 .tile.visited::after {
   opacity: 0;
 }
 .tile.wall {
-  background: 0 0/contain url(textures/cassandra-brown-brickwork-1.jpeg) repeat;
+  background: 0 0 / contain url(textures/cassandra-brown-brickwork-1.jpeg)
+    repeat;
   border-radius: 3px;
   z-index: var(--z-index-surface);
+}
+
+.tile > * {
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: var(--z-index-surface);
+}
+
+.tile > .dirt {
+  background: 4% 6%/51% 49% radial-gradient(grey, transparent) no-repeat,
+    12% 78%/49% 46% radial-gradient(grey, transparent) no-repeat,
+    100% 100%/41% 51% radial-gradient(grey, transparent) no-repeat,
+    100% 1%/49% 51% radial-gradient(grey, transparent) no-repeat;
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+.tile.dirty > .dirt {
+  opacity: 1;
 }
 
 .ui {

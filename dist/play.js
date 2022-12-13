@@ -238,21 +238,51 @@ function play(level) {
             const row = level[y];
             for (const x in row) {
                 const value = row[x];
-                let tile = document.querySelector(`.tile.x${x}.y${y}`);
-                if (!tile) {
-                    tile = document.createElement("div");
-                    tile.classList.add("tile", `x${x}`, `y${y}`);
-                    room.appendChild(tile);
-                }
+                const tile = getTile(x, y, value);
+                const dirt = getDirt(tile);
                 if (value > 0)
-                    tile.classList.add("dirt");
-                else
-                    tile.classList.remove("dirt");
-                if (value < 0)
-                    tile.classList.add("wall");
-                tile.style.left = `${x * 20}vmin`;
-                tile.style.top = `${y * 20}vmin`;
+                    dirt.style.opacity = value;
+                tile.classList.remove("dirty");
             }
+        }
+        function getTile(x, y, value) {
+            let tile = document.querySelector(`.tile.x${x}.y${y}`);
+            if (tile)
+                return tile;
+            tile = document.createElement("div");
+            tile.classList.add("tile", `x${x}`, `y${y}`);
+            tile.style.left = `${x * 20}vmin`;
+            tile.style.top = `${y * 20}vmin`;
+            if (value >= 0)
+                tile.style.backgroundPositionY = `${Math.floor(Math.random() * 5) * 20 - 1}px`;
+            else
+                tile.classList.add("wall");
+            room.appendChild(tile);
+            return tile;
+        }
+        function getDirt(tile) {
+            let dirt = tile.querySelector(".tile .dirt");
+            if (dirt)
+                return dirt;
+            dirt = document.createElement("div");
+            dirt.classList.add("dirt");
+            tile.appendChild(dirt);
+            tile.classList.add("dirty");
+            return dirt;
+            /* tile.style.background = [
+              [0, 0],
+              [100, 0],
+              [0, 100],
+              [100, 100],
+            ]
+              .map(([x, y]) => {
+                with (Math) {
+                  const width = floor(random() * 10 - 5) + 50;
+                  const height = floor(random() * 10 - 5) + 50;
+                  return `${x}% ${y}%/${width}% ${height}% radial-gradient(grey, transparent) no-repeat`;
+                }
+              })
+              .join(","); */
         }
     }
 }
