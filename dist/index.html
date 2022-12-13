@@ -1,30 +1,96 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Roberto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="icons/r.png" type="image/png" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&display=block");
+
+      :root {
+        background-color: black;
+      }
+
+      body {
+        opacity: 0;
+        transition: opacity 3s ease-in;
+      }
+
+      #splash {
+        align-items: center;
+        background-color: black;
+        display: flex;
+        height: 100vh;
+        position: absolute;
+        place-content: center;
+        right: 0;
+        width: 100vw;
+      }
+      #splash span.secondary {
+        opacity: 0;
+        transition: opacity 3s ease-in;
+      }
+      #splash h1 {
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+        text-align: center;
+      }
+      #splash h1 .primary {
+        font-family: "Bungee Spice", cursive;
+      }
+      #splash h1 .secondary {
+        font-family: "Nabla", cursive;
+      }
+    </style>
+    <link rel="stylesheet" href="index.css" />
     <link rel="manifest" href="roberto.webmanifest" />
+    <script src="index.js" defer></script>
   </head>
   <body>
-    <h1>Le avventure di Roberto, il robot esperto</h1>
-    <form action="./play.html" method="get">
-      <label for="skin">Skin</label>
-      <select name="skin">
-        <option value="skins/default.css">Default</option>
-      </select>
-      <label for="level">Level</label>
-      <select name="level">
-        <option value="levels/default.js">Default</option>
-      </select>
-      <button type="submit">Play</button>
-    </form>
+    <header id="splash">
+      <h1>
+        <span
+          class="secondary"
+          style="letter-spacing: 0.03em"
+          data-content="Le avventure di"
+        ></span>
+        <span
+          class="primary"
+          style="font-size: 156%"
+          data-content="Roberto"
+        ></span>
+        <span class="secondary" data-content="Il robot esperto"></span>
+      </h1>
+    </header>
+    <section id="configuration">
+      <form action="./play.html" method="get">
+        <label for="skin">Skin</label>
+        <select name="skin">
+          <option value="skins/default.css">Default</option>
+        </select>
+        <label for="level">Room</label>
+        <select name="level">
+          <option value="levels/default.js">Default</option>
+        </select>
+        &nbsp;
+        <button type="submit">Play</button>
+      </form>
+    </section>
     <script>
+      window.addEventListener("load", () => {
+        document.querySelectorAll("#splash h1 > span").forEach((el) => {
+          el.innerText = el.dataset["content"];
+          el.classList.add("loaded");
+          console.info("loaded", el);
+        });
+      });
       if ("serviceWorker" in navigator) {
-        navigator.serviceWorker
-          .register("sw.js")
-          .then(() => {
-            console.log("Service Worker Registered");
-          });
+        navigator.serviceWorker.register("sw.js").then(() => {
+          console.log("Service Worker Registered");
+        });
       }
     </script>
   </body>
