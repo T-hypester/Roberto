@@ -40,6 +40,6 @@ button, input, select {
   opacity: 1;
 }
 #splash.clicked {
-  height: 10em;
-  transition: height 1s linear;
+  height: 17em;
+  transition: height 1s cubic-bezier(.42,0,1,.80);
 }
