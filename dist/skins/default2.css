@@ -1,0 +1,19 @@
+.robot {
+  background: red;
+  border: 1vmin solid black;
+  border-radius: 50%;
+}
+
+.robot .status {
+  --color: limegreen;
+  bottom: 0;
+  color: var(--color);
+  font: bold 12vmin/16vmin sans-serif;
+  left: 0;
+  position: absolute;
+  right: 0;
+  text-align: right;
+  text-shadow: 0 0 1vmin var(--color);
+  top: 0;
+  white-space: pre;
+}

@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="icons/r.png" type="image/png" />
+    <link rel="stylesheet" href="popup.css">
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&display=block");
 
@@ -49,7 +50,7 @@
     <link rel="manifest" href="roberto.webmanifest" />
     <script src="index.js" defer></script>
   </head>
-  <body>
+  <body onload="setdivskin()">
     <header id="splash">
       <h1>
         <span
@@ -59,7 +60,7 @@
         ></span>
         <span
           class="primary"
-          style="font-size: 156%"
+          style="font-size: 156%"Z
           data-content="Roberto"
         ></span>
         <span class="secondary" data-content="Il robot esperto"></span>
@@ -67,10 +68,35 @@
     </header>
     <section id="configuration">
       <form action="./play.html" method="get">
-        <label for="skin">Skin</label>
-        <select name="skin">
-          <option value="skins/default.css">Default</option>
-        </select>
+
+        <label for="skin">skin</label>
+        <div style="height: 4rem; width: 4rem; background-color: black; border: 2px solid limegreen;" onclick="location.href='#skinsel'">
+          <link id="skincss" rel="stylesheet" href="">
+          <div id="roberto" class="robot" style="height: 2rem; width: 2rem; margin: 0.5rem; outline: 2px solid white;">
+          <h1 style="text-align: center;">: )</h1>
+          </div>
+        </div>
+
+        <div id="skinsel" class="overlay">
+          <div class="popup" style="background-color: rgb(32, 32, 32);">
+            <h2 style="color: limegreen;">Skin selector</h2>
+            <a class="close" href="#">&times;</a>
+            <div class="content">
+              <select name="skin" id="skinmenu" size="5" style="width: 100%; margin-top: 2rem;">
+                <option selected value="skins/default.css" onclick="setdivskin()"> skin1 </option>
+                <option value="skins/default2.css" onclick="setdivskin()"> skin2 </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          function setdivskin(){
+            document.getElementById("skincss").href = document.getElementById("skinmenu").value
+            location.href='#'
+          }
+        </script>
+
         <label for="level">Room</label>
         <select name="level">
           <option value="levels/default.js">Default</option>
