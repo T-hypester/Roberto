@@ -10,7 +10,7 @@ const RIGHT = 100;
 
 function loadSkin() {
   const url = new URL(location);
-  const skinOverride = url.searchParams.get("skin");
+  const skinOverride = localStorage.getItem("skin"); // url.searchParams.get("skin");
   if (skinOverride) {
     const skin = document.querySelector("link#skin");
     skin.href = decodeURIComponent(skinOverride);
@@ -19,7 +19,7 @@ function loadSkin() {
 
 function loadLevel() {
   const url = new URL(location);
-  const levelUrl = url.searchParams.get("level");
+  const levelUrl = localStorage.getItem("level"); //url.searchParams.get("level");
 
   if (!levelUrl) {
     alert("No level selected :(");
@@ -58,6 +58,10 @@ function play(level) {
         dustbox: {
           capacity: Infinity,
           amount: 0,
+        },
+
+        memory: {
+          size: 8,
         },
 
         direction: 100,
@@ -170,6 +174,8 @@ function play(level) {
         },
       };
 
+  setupRobot(tino);
+
   const input = new Input({
     robot: tino,
   });
@@ -202,9 +208,12 @@ function play(level) {
   }
 
   function renderRobot() {
+    const tileSize = getTileSize();
     const roberto = document.getElementById("roberto");
-    roberto.style.left = `${tino.position[0] * 20}vmin`;
-    roberto.style.top = `${tino.position[1] * 20}vmin`;
+    roberto.style.width = `${tileSize}vmin`;
+    roberto.style.height = `${tileSize}vmin`;
+    roberto.style.left = `${tino.position[0] * tileSize}vmin`;
+    roberto.style.top = `${tino.position[1] * tileSize}vmin`;
 
     const rect = roberto.getBoundingClientRect();
     const dX = rect.left - window.innerWidth + rect.right;
@@ -215,9 +224,10 @@ function play(level) {
   }
 
   function renderRoom() {
+    const tileSize = getTileSize();
     const room = document.getElementById("room");
-    room.style.height = `${level.length * 20}vmin`;
-    room.style.width = `${level[0].length * 20}vmin`;
+    room.style.height = `${level.length * tileSize}vmin`;
+    room.style.width = `${level[0].length * tileSize}vmin`;
 
     for (const y in level) {
       const row = level[y];
@@ -231,18 +241,21 @@ function play(level) {
     }
 
     function getTile(x, y, value) {
+      const tileSize = getTileSize();
       let tile = document.querySelector(`.tile.x${x}.y${y}`);
       if (tile) return tile;
 
       tile = document.createElement("div");
       tile.classList.add("tile", `x${x}`, `y${y}`, "fow");
-      tile.style.left = `${x * 20}vmin`;
-      tile.style.top = `${y * 20}vmin`;
+      tile.style.width = `${tileSize}vmin`;
+      tile.style.height = `${tileSize}vmin`;
+      tile.style.left = `${x * tileSize}vmin`;
+      tile.style.top = `${y * tileSize}vmin`;
 
       if (value >= 0) {
         tile.classList.add("floor");
         tile.style.backgroundPositionY = `${
-          Math.floor(Math.random() * 5) * 20 - 1
+          Math.floor(Math.random() * 5) * tileSize - 1
         }px`;
       } else tile.classList.add("wall");
 
@@ -251,6 +264,7 @@ function play(level) {
     }
 
     function getDirt(tile) {
+      const tileSize = getTileSize();
       let dirt = tile.querySelector(".tile .dirt");
       if (dirt) return dirt;
 
@@ -280,4 +294,17 @@ function play(level) {
       return dirt;
     }
   }
+
+  function getTileSize() {
+    return Math.floor(100 / getTilesPerSide());
+  }
+
+  function getTilesPerSide() {
+    let val = Math.floor(Math.sqrt(tino.memory.size + 1));
+    return val + 1 - (val % 2);
+  }
+}
+
+function setupRobot(tino) {
+  tino.memory.size = parseInt(localStorage.getItem("ram"));
 }
