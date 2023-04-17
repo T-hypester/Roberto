@@ -50,7 +50,7 @@
     <link rel="manifest" href="roberto.webmanifest" />
     <script src="index.js" defer></script>
   </head>
-  <body onload="setdivskin()">
+  <body onload="onInit()">
     <header id="splash">
       <h1>
         <span
@@ -98,22 +98,41 @@
         </script>
 
         <label for="level">Room</label>
-        <select name="level">
+        <select id="level" name="level">
           <option value="levels/default.js">Default</option>
         </select>
 
         <label for="ram">Ram</label>
-        <select name="ram">
+        <select id="ram" name="ram">
           <option value="8" style="color:black">8mb</option>
           <option value="24" style="color:black">24mb</option>
           <option value="48" style="color:black">48mb</option>
         </select>
         
         &nbsp;
-        <button type="submit">Play</button>
+        <button onclick="saveSettings()" type="submit">Play</button>
       </form>
     </section>
     <script>
+      function onInit(){
+        loadSettings();
+        setdivskin();
+      }
+
+      function saveSettings(){
+        console.log("Saved settings")
+        localStorage.setItem("skin", document.getElementById("skinmenu").value);
+        localStorage.setItem("level", document.getElementById("level").value);
+        localStorage.setItem("ram", document.getElementById("ram").value);
+      }
+
+      function loadSettings(){
+        console.log("Loaded settings")
+        document.getElementById("skinmenu").value = localStorage.getItem("skin");
+        document.getElementById("level").value = localStorage.getItem("level");
+        document.getElementById("ram").value = localStorage.getItem("ram");
+      }
+
       window.addEventListener("load", () => {
         document.querySelectorAll("#splash h1 > span").forEach((el) => {
           el.innerText = el.dataset["content"];
