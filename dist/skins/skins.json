@@ -1,0 +1,19 @@
+{
+"skins": [
+    {
+        "id" : 0,
+        "name": "Default Skin",
+        "path": "skins/default.css"
+    },
+    {   
+        "id" : 1,
+        "name": "Default Red Skin",
+        "path": "skins/default-red.css"
+    },
+    {   
+        "id" : 2,
+        "name": "Test Skin",
+        "path": "skins/default-red.css"
+    }
+    ]
+}
