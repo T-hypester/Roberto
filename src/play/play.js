@@ -9,25 +9,23 @@ const LEFT = -100;
 const RIGHT = 100;
 
 function loadSkin() {
-  const url = new URL(location);
-  const skinOverride = localStorage.getItem("skin");
-  if (skinOverride) {
+  const href = GameConfiguration.skinUrl;
+  if (href) {
     const skin = document.querySelector("link#skin");
-    skin.href = decodeURIComponent(skinOverride);
+    skin.href = decodeURIComponent(href);
   }
 }
 
 function loadLevel() {
-  const url = new URL(location);
-  const levelUrl = localStorage.getItem("level");
+  const src = GameConfiguration.levelUrl;
 
-  if (!levelUrl) {
+  if (!src) {
     alert("No level selected :(");
     throw new Error("No level! :?");
   }
 
   const levelScript = Object.assign(document.createElement("script"), {
-    src: levelUrl,
+    src,
   });
   document.body.appendChild(levelScript);
 }
@@ -228,7 +226,6 @@ function play(level) {
     }
 
     function getDirt(tile) {
-      const tileSize = getTileSize();
       let dirt = tile.querySelector(".tile .dirt");
       if (dirt) return dirt;
 
@@ -276,7 +273,7 @@ function setupRobot(tino) {
   });
 
   const memory = new Ram({
-    size: localStorage.getItem("ram"),
+    size: GameConfiguration.memorySize,
   });
 
   const sensor = new LaserSensor();
