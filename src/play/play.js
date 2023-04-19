@@ -10,7 +10,7 @@ const RIGHT = 100;
 
 function loadSkin() {
   const url = new URL(location);
-  const skinOverride = localStorage.getItem("skin"); // url.searchParams.get("skin");
+  const skinOverride = localStorage.getItem("skin");
   if (skinOverride) {
     const skin = document.querySelector("link#skin");
     skin.href = decodeURIComponent(skinOverride);
@@ -19,7 +19,7 @@ function loadSkin() {
 
 function loadLevel() {
   const url = new URL(location);
-  const levelUrl = localStorage.getItem("level"); //url.searchParams.get("level");
+  const levelUrl = localStorage.getItem("level");
 
   if (!levelUrl) {
     alert("No level selected :(");
@@ -41,20 +41,6 @@ function play(level) {
     robertino =
     roberto =
       {
-        battery: {
-          capacity: 30,
-          charge: Infinity,
-          use(amt = 0.1) {
-            if (this.charge <= 0) {
-              const roberto = document.getElementById("roberto");
-              roberto.classList.add("battery");
-              tino.emote("X(");
-              throw new Error("No battery! X(");
-            }
-            this.charge = Math.max(this.charge - amt, 0);
-          },
-        },
-
         dustbox: {
           capacity: Infinity,
           amount: 0,
@@ -68,6 +54,13 @@ function play(level) {
         moving: false,
         position: [1, 1],
         rotation: 100,
+
+        connect(devices) {
+          Object.entries(devices).forEach(([bay, device]) => {
+            device.robot = this;
+            this[bay] = device;
+          });
+        },
 
         emote(text) {
           const tino = document.querySelector("#roberto .status");
@@ -277,7 +270,13 @@ function play(level) {
 
 function setupRobot(tino) {
   tino.memory.size = parseInt(localStorage.getItem("ram"));
-  tino.sensor = new BasicSensor({
-    robot: tino,
+
+  const sensor = new BasicSensor();
+
+  const battery = new Battery({
+    capacity: 45,
+    charge: Infinity
   });
+
+  tino.connect({ battery, sensor });
 }
