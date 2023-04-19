@@ -271,12 +271,12 @@ function play(level) {
 function setupRobot(tino) {
   tino.memory.size = parseInt(localStorage.getItem("ram"));
 
-  const sensor = new BasicSensor();
-
   const battery = new Battery({
     capacity: 45,
     charge: Infinity
-  });
+  })
+
+  const sensor = new LaserSensor();
 
   tino.connect({ battery, sensor });
 }

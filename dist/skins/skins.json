@@ -7,10 +7,6 @@
     {   
         "name": "Default Red Skin",
         "path": "skins/default-red.css"
-    },
-    {   
-        "name": "Test Skin",
-        "path": "skins/default-red.css"
     }
     ]
 }
