@@ -13,5 +13,8 @@
   "devDependencies": {
     "serve": "^14.1.2",
     "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "yarn": "^1.22.19"
   }
 }

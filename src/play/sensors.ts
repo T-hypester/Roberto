@@ -41,3 +41,92 @@ class BasicSensor {
         }
       }
 }
+
+class LaserSensor {
+  private robot: any
+
+  constructor(ctx: {
+      robot: any
+  }) {
+      Object.assign(this, ctx)
+  }
+
+  look() {
+      const position = [...this.robot.position];
+      const startTile = document.querySelector(
+        `.x${position[0]}.y${position[1]}`
+      );
+      startTile.classList.remove("fow");
+
+      var tmpPos = [...position]
+      var tile = startTile
+
+      tmpPos = [...position]
+      tile = startTile
+      let ymax = Infinity
+      let ymin = -Infinity
+      while(!tile.classList.contains("wall")){
+        let tmpPosI = [...tmpPos]
+        let tileI = tile
+        while(!tileI.classList.contains("wall") && tmpPosI[1] < ymax){
+          tmpPosI = [tmpPosI[0],tmpPosI[1] + 1];
+          tileI = document.querySelector(
+            `.x${tmpPosI[0]}.y${tmpPosI[1]}`
+          );    
+          tileI.classList.remove("fow");  
+        }
+        ymax = Math.min(ymax, tmpPosI[1])
+        tmpPosI = [...tmpPos]
+        tileI = tile
+        while(!tileI.classList.contains("wall")&& tmpPosI[1] > ymin){
+          tmpPosI = [tmpPosI[0],tmpPosI[1] - 1];
+          tileI = document.querySelector(
+            `.x${tmpPosI[0]}.y${tmpPosI[1]}`
+          );    
+          tileI.classList.remove("fow");  
+        }
+        ymin = Math.max(ymin, tmpPosI[1])
+
+        tmpPos = [tmpPos[0] + 1,tmpPos[1]];
+        var tile = document.querySelector(
+          `.x${tmpPos[0]}.y${tmpPos[1]}`
+        );    
+        tile.classList.remove("fow");
+      }
+
+
+      tmpPos = [...position]
+      tile = startTile
+      ymax = Infinity
+      ymin = -Infinity
+      while(!tile.classList.contains("wall")){
+        let tmpPosI = [...tmpPos]
+        let tileI = tile
+        while(!tileI.classList.contains("wall") && tmpPosI[1] < ymax){
+          tmpPosI = [tmpPosI[0],tmpPosI[1] + 1];
+          tileI = document.querySelector(
+            `.x${tmpPosI[0]}.y${tmpPosI[1]}`
+          );    
+          tileI.classList.remove("fow");  
+        }
+        ymax = Math.min(ymax, tmpPosI[1])
+        tmpPosI = [...tmpPos]
+        tileI = tile
+        while(!tileI.classList.contains("wall")&& tmpPosI[1] > ymin){
+          tmpPosI = [tmpPosI[0],tmpPosI[1] - 1];
+          tileI = document.querySelector(
+            `.x${tmpPosI[0]}.y${tmpPosI[1]}`
+          );    
+          tileI.classList.remove("fow");  
+        }
+        ymin = Math.max(ymin, tmpPosI[1])
+
+        tmpPos = [tmpPos[0] - 1,tmpPos[1]];
+        var tile = document.querySelector(
+          `.x${tmpPos[0]}.y${tmpPos[1]}`
+        );    
+        tile.classList.remove("fow");
+      }
+      
+    }
+}
