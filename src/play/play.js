@@ -34,21 +34,22 @@ function loadLevel() {
 
 function play(level) {
   const body = document.querySelector("body");
-  body.classList.remove("status=loading");
-  body.classList.add("status=playing");
+  body.classList.replace("status=loading", "status=playing");
 
   tino =
     robertino =
     roberto =
       {
+        battery: undefined,
+
         dustbox: {
           capacity: Infinity,
           amount: 0,
         },
 
-        memory: {
-          size: 8,
-        },
+        memory: undefined,
+
+        sensor: undefined,
 
         direction: 100,
         moving: false,
@@ -269,14 +270,16 @@ function play(level) {
 }
 
 function setupRobot(tino) {
-  tino.memory.size = parseInt(localStorage.getItem("ram"));
-
   const battery = new Battery({
     capacity: 45,
-    charge: Infinity
-  })
+    charge: Infinity,
+  });
+
+  const memory = new Ram({
+    size: localStorage.getItem("ram"),
+  });
 
   const sensor = new LaserSensor();
 
-  tino.connect({ battery, sensor });
+  tino.connect({ battery, memory, sensor });
 }
