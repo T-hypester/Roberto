@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="icons/r.png" type="image/png" />
     <link rel="stylesheet" href="popup.css">
+    <script src="settings.js"></script>
+    <script src="skinSystem.js"></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&display=block");
 
@@ -67,7 +69,7 @@
       </h1>
     </header>
     <section id="configuration">
-      <form action="./play.html" method="get">
+      <form action="./play.html" method="GET">
 
         <label for="skin">Skin</label>
         <div style="height: 4rem; width: 4rem; background-color: black; border: 2px solid limegreen;" onclick="location.href='#skinsel'">
@@ -87,13 +89,6 @@
             </div>
           </div>
         </div>
-
-        <script>
-          function setdivskin(){
-            document.getElementById("skincss").href = document.getElementById("skinmenu").value
-            location.href='#'
-          }
-        </script>
 
         <label for="level">Room</label>
         <select id="level" name="level">
@@ -116,29 +111,6 @@
         loadSkins();
         loadSettings();
         setdivskin();
-      }
-
-      async function loadSkins(){
-        const response = await fetch("skins/skins.json");
-        const data = (await response.json()).skins;
-        data.forEach(function(item) {
-          document.getElementById('skinmenu').insertAdjacentHTML("beforeend",'<option value="'+item.path+'" onclick="setdivskin()"> '+item.name+' </option>');
-        });
-        document.getElementById("skincss").href = localStorage.getItem("skin");
-      }
-
-      function saveSettings(){
-        console.log("Saved settings")
-        localStorage.setItem("skin", document.getElementById("skinmenu").value);
-        localStorage.setItem("level", document.getElementById("level").value);
-        localStorage.setItem("ram", document.getElementById("ram").value);
-      }
-
-      function loadSettings(){
-        console.log("Loaded settings")
-        document.getElementById("level").value = localStorage.getItem("level");
-        document.getElementById("ram").value = localStorage.getItem("ram");
-        document.getElementById("skinmenu").value = localStorage.getItem("skin");
       }
 
       window.addEventListener("load", () => {
