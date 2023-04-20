@@ -34,147 +34,8 @@ function play(floorPlan) {
   const body = document.querySelector("body");
   body.classList.replace("status=loading", "status=playing");
 
-  const robot = buildRobot(floorPlan);
-  const input = new Input({ robot });
+  const room = { floorPlan };
 
-  // Globally visible aliases for interacting with the robot
-  // via the browser's console
-  tino = robertino = roberto = robot;
-
-  run();
-  function run() {
-    renderRoom();
-    renderRobot();
-    renderStats();
-
-    tino.suck();
-    tino.look();
-
-    input.run();
-
-    requestAnimationFrame(run);
-  }
-
-  function renderStats() {
-    const battery = document.getElementById("battery");
-    with (tino.battery) {
-      const value = (charge * 100) / capacity;
-      if (isNaN(value) || value < 0 || value >= Infinity)
-        battery.style.display = "none";
-      battery.innerText = `${value.toFixed(0)}%`;
-    }
-
-    const points = document.getElementById("stats");
-    points.innerText = `${tino.dustbox.amount.toFixed(0)}pt`;
-  }
-
-  function renderRobot() {
-    const tileSize = getTileSize();
-    const roberto = document.getElementById("roberto");
-    roberto.style.width = `${tileSize}vmin`;
-    roberto.style.height = `${tileSize}vmin`;
-    roberto.style.left = `${tino.position[0] * tileSize}vmin`;
-    roberto.style.top = `${tino.position[1] * tileSize}vmin`;
-
-    const rect = roberto.getBoundingClientRect();
-    const dX = rect.left - window.innerWidth + rect.right;
-    const dY = rect.top - window.innerHeight + rect.bottom;
-
-    const viewport = document.getElementById("viewport");
-    viewport.scrollBy(dX / 10, dY / 10);
-  }
-
-  function renderRoom() {
-    const tileSize = getTileSize();
-    const room = document.getElementById("room");
-    room.style.height = `${floorPlan.length * tileSize}vmin`;
-    room.style.width = `${floorPlan[0].length * tileSize}vmin`;
-
-    for (const y in floorPlan) {
-      const row = floorPlan[y];
-      for (const x in row) {
-        setRobotPosition(parseInt(x), parseInt(y));
-        drawTile(x, y);
-        drawDirt(x, y);
-      }
-    }
-
-    function setRobotPosition(x, y) {
-      const value = floorPlan[y][x];
-      if (value === "S") {
-        robot.position = [x, y];
-        floorPlan[y][x] = 0;
-      }
-    }
-
-    function drawTile(x, y) {
-      const value = floorPlan[y][x];
-      let tile = document.querySelector(`.tile.x${x}.y${y}`);
-      if (tile) return;
-
-      const tileSize = getTileSize();
-      tile = document.createElement("div");
-      tile.classList.add("tile", `x${x}`, `y${y}`, "fow");
-      tile.style.width = `${tileSize}vmin`;
-      tile.style.height = `${tileSize}vmin`;
-      tile.style.left = `${x * tileSize}vmin`;
-      tile.style.top = `${y * tileSize}vmin`;
-
-      if (value >= 0) {
-        tile.classList.add("floor");
-        tile.style.backgroundPositionY = `${
-          Math.floor(Math.random() * 5) * tileSize - 1
-        }px`;
-      } else tile.classList.add("wall");
-
-      room.appendChild(tile);
-    }
-
-    function drawDirt(x, y) {
-      const value = floorPlan[y][x];
-      const tile = document.querySelector(`.tile.x${x}.y${y}`);
-      let dirt = tile.querySelector(".tile .dirt");
-      if (dirt) {
-        if (value > 0) dirt.style.opacity = value;
-        return;
-      }
-
-      dirt = document.createElement("div");
-      dirt.classList.add("dirt");
-
-      tile.appendChild(dirt);
-      //tile.classList.add("dirty");
-
-      dirt.style.background = [
-        [0, 0],
-        [100, 0],
-        [0, 100],
-        [100, 100],
-      ]
-        .map(([bx, by]) => {
-          with (Math) {
-            const x = floor(random() * 10) - 5 + bx;
-            const y = floor(random() * 10) - 5 + by;
-            const width = floor(random() * 20) - 10 + 50;
-            const height = floor(random() * 20) - 10 + 50;
-            return `${x}% ${y}%/${width}% ${height}% radial-gradient(grey, transparent) no-repeat`;
-          }
-        })
-        .join(",");
-    }
-  }
-
-  function getTileSize() {
-    return Math.floor(100 / getTilesPerSide());
-  }
-
-  function getTilesPerSide() {
-    let val = Math.floor(Math.sqrt(tino.memory.size + 1));
-    return val + 1 - (val % 2);
-  }
-}
-
-function buildRobot(floorPlan) {
   const battery = new Battery({
     capacity: 100,
     charge: Infinity,
@@ -186,12 +47,31 @@ function buildRobot(floorPlan) {
 
   const sensor = Sensor.create(GameConfiguration.sensorType);
 
-  return Robot.create({
+  const robot = Robot.create({
     battery,
     memory,
-    room: {
-      floorPlan,
-    },
+    room,
     sensor,
   });
+  const input = new Input({ robot });
+
+  const ui = new Ui({
+    robot,
+    room,
+  });
+
+  tino = robertino = roberto = robot;
+
+  run();
+
+  function run() {
+    ui.render();
+
+    robot.suck();
+    robot.look();
+
+    input.run();
+
+    requestAnimationFrame(run);
+  }
 }
