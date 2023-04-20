@@ -30,120 +30,118 @@ function loadLevel() {
   document.body.appendChild(levelScript);
 }
 
-function play(level) {
+function play(floorPlan) {
   const body = document.querySelector("body");
   body.classList.replace("status=loading", "status=playing");
 
-  tino =
-    robertino =
-    roberto =
-      {
-        battery: undefined,
+  const robot = {
+    battery: undefined,
 
-        dustbox: {
-          capacity: Infinity,
-          amount: 0,
-        },
+    dustbox: {
+      capacity: Infinity,
+      amount: 0,
+    },
 
-        memory: undefined,
+    memory: undefined,
 
-        sensor: undefined,
+    sensor: undefined,
 
-        direction: 100,
-        moving: false,
-        position: [1, 1],
-        rotation: 100,
+    direction: 100,
+    moving: false,
+    position: [1, 1],
+    rotation: 100,
 
-        connect(devices) {
-          Object.entries(devices).forEach(([bay, device]) => {
-            device.robot = this;
-            this[bay] = device;
-          });
-        },
+    connect(devices) {
+      Object.entries(devices).forEach(([bay, device]) => {
+        device.robot = this;
+        this[bay] = device;
+      });
+    },
 
-        emote(text) {
-          const tino = document.querySelector("#roberto .status");
-          const glyph = tino.innerText;
-          if (text == glyph) return;
-          tino.innerText = text;
-          if (this.battery.charge > 0)
-            setTimeout(() => {
-              tino.innerHTML = glyph;
-            }, 500);
-        },
+    emote(text) {
+      const tino = document.querySelector("#roberto .status");
+      const glyph = tino.innerText;
+      if (text == glyph) return;
+      tino.innerText = text;
+      if (this.battery.charge > 0)
+        setTimeout(() => {
+          tino.innerHTML = glyph;
+        }, 500);
+    },
 
-        rotate(side) {
-          this.moving = true;
-          this.battery.use();
-          switch (side) {
-            case LEFT:
-            case RIGHT:
-              this.rotation += side;
-              break;
-          }
-          this.direction = (this.rotation + 400) % 400;
-          const roberto = document.getElementById("roberto");
-          roberto.style.transform = `rotateZ(${this.rotation - 100}grad)`;
-          setTimeout(() => {
-            this.moving = false;
-          }, 1000);
-        },
+    rotate(side) {
+      this.moving = true;
+      this.battery.use();
+      switch (side) {
+        case LEFT:
+        case RIGHT:
+          this.rotation += side;
+          break;
+      }
+      this.direction = (this.rotation + 400) % 400;
+      const roberto = document.getElementById("roberto");
+      roberto.style.transform = `rotateZ(${this.rotation - 100}grad)`;
+      setTimeout(() => {
+        this.moving = false;
+      }, 1000);
+    },
 
-        look() {
-          this.sensor.look();
-        },
+    look() {
+      this.sensor.look();
+    },
 
-        move(amount = Input.FORWARD) {
-          this.moving = true;
-          this.battery.use();
-          const newPosition = [...this.position];
-          switch ((this.direction + 400) % 400) {
-            case NORTH:
-              newPosition[1] = this.position[1] - amount;
-              break;
-            case EAST:
-              newPosition[0] = this.position[0] + amount;
-              break;
-            case SOUTH:
-              newPosition[1] = this.position[1] + amount;
-              break;
-            case WEST:
-              newPosition[0] = this.position[0] - amount;
-              break;
-          }
-          if (level[newPosition[1]][newPosition[0]] < 0) {
-            this.emote("X0");
-            console.error("BUMP! XO");
-            this.moving = false;
-            return;
-          }
-          this.position = newPosition;
-          setTimeout(() => {
-            this.moving = false;
-          }, 1000);
-        },
+    move(amount = Input.FORWARD) {
+      this.moving = true;
+      this.battery.use();
+      const newPosition = [...this.position];
+      switch ((this.direction + 400) % 400) {
+        case NORTH:
+          newPosition[1] = this.position[1] - amount;
+          break;
+        case EAST:
+          newPosition[0] = this.position[0] + amount;
+          break;
+        case SOUTH:
+          newPosition[1] = this.position[1] + amount;
+          break;
+        case WEST:
+          newPosition[0] = this.position[0] - amount;
+          break;
+      }
+      if (floorPlan[newPosition[1]][newPosition[0]] < 0) {
+        this.emote("X0");
+        console.error("BUMP! XO");
+        this.moving = false;
+        return;
+      }
+      this.position = newPosition;
+      setTimeout(() => {
+        this.moving = false;
+      }, 1000);
+    },
 
-        suck() {
-          const [x, y] = this.position;
-          let tile = level[y][x];
-          tile -= 0.1;
-          if (tile >= 0) {
-            this.dustbox.amount += 0.1;
-            level[y][x] = tile;
-          } else {
-            level[y][x] = 0;
-          }
-        },
-      };
+    suck() {
+      const [x, y] = this.position;
+      let value = floorPlan[y][x];
+      value -= 0.1;
+      if (value >= 0) {
+        this.dustbox.amount += 0.1;
+        floorPlan[y][x] = value;
+      } else {
+        floorPlan[y][x] = 0;
+      }
+    },
+  };
+  setupRobot(robot);
 
-  setupRobot(tino);
+  // Globally visible aliases for interacting with the robot
+  // via the browser's console
+  tino = robertino = roberto = robot;
 
-  const input = new Input({
-    robot: tino,
-  });
+  const input = new Input({ robot });
 
-  render();
-  function render() {
+  run();
+  function run() {
     renderRoom();
     renderRobot();
     renderStats();
@@ -153,7 +151,7 @@ function play(level) {
 
     input.run();
 
-    requestAnimationFrame(render);
+    requestAnimationFrame(run);
   }
 
   function renderStats() {
@@ -188,25 +186,32 @@ function play(level) {
   function renderRoom() {
     const tileSize = getTileSize();
     const room = document.getElementById("room");
-    room.style.height = `${level.length * tileSize}vmin`;
-    room.style.width = `${level[0].length * tileSize}vmin`;
+    room.style.height = `${floorPlan.length * tileSize}vmin`;
+    room.style.width = `${floorPlan[0].length * tileSize}vmin`;
 
-    for (const y in level) {
-      const row = level[y];
+    for (const y in floorPlan) {
+      const row = floorPlan[y];
       for (const x in row) {
-        const value = row[x];
-        const tile = getTile(x, y, value);
-        const dirt = getDirt(tile);
-        if (value > 0) dirt.style.opacity = value;
-        tile.classList.remove("dirty");
+        setRobotPosition(parseInt(x), parseInt(y));
+        drawTile(x, y);
+        drawDirt(x, y);
       }
     }
 
-    function getTile(x, y, value) {
-      const tileSize = getTileSize();
-      let tile = document.querySelector(`.tile.x${x}.y${y}`);
-      if (tile) return tile;
+    function setRobotPosition(x, y) {
+      const value = floorPlan[y][x];
+      if (value === "S") {
+        robot.position = [x, y];
+        floorPlan[y][x] = 0;
+      }
+    }
 
+    function drawTile(x, y) {
+      const value = floorPlan[y][x];
+      let tile = document.querySelector(`.tile.x${x}.y${y}`);
+      if (tile) return;
+
+      const tileSize = getTileSize();
       tile = document.createElement("div");
       tile.classList.add("tile", `x${x}`, `y${y}`, "fow");
       tile.style.width = `${tileSize}vmin`;
@@ -222,18 +227,22 @@ function play(level) {
       } else tile.classList.add("wall");
 
       room.appendChild(tile);
-      return tile;
     }
 
-    function getDirt(tile) {
+    function drawDirt(x, y) {
+      const value = floorPlan[y][x];
+      const tile = document.querySelector(`.tile.x${x}.y${y}`);
       let dirt = tile.querySelector(".tile .dirt");
-      if (dirt) return dirt;
+      if (dirt) {
+        if (value > 0) dirt.style.opacity = value;
+        return
+      }
 
       dirt = document.createElement("div");
       dirt.classList.add("dirt");
 
       tile.appendChild(dirt);
-      tile.classList.add("dirty");
+      //tile.classList.add("dirty");
 
       dirt.style.background = [
         [0, 0],
@@ -251,8 +260,6 @@ function play(level) {
           }
         })
         .join(",");
-
-      return dirt;
     }
   }
 
@@ -266,7 +273,7 @@ function play(level) {
   }
 }
 
-function setupRobot(tino) {
+function setupRobot(robot) {
   const battery = new Battery({
     capacity: 45,
     charge: Infinity,
@@ -275,11 +282,10 @@ function setupRobot(tino) {
   const memory = new Ram({
     size: GameConfiguration.memorySize,
   });
-  if(localStorage.getItem("sensor")){
-    const sensor = new LaserSensor();
-  }else{
-    const sensor = new BaseSensor();
-  }
 
-  tino.connect({ battery, memory, sensor });
+  const sensor = localStorage.getItem("sensor")
+    ? new LaserSensor()
+    : new BaseSensor();
+
+  robot.connect({ battery, memory, sensor });
 }
