@@ -1,7 +1,7 @@
-class Battery {
-  robot: any;
+class Battery implements Component {
+  robot: Robot;
 
-  capacity: number;
+  readonly capacity: number;
   charge = 0;
 
   constructor(props: { capacity: number }) {

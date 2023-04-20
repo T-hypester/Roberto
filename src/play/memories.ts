@@ -1,4 +1,6 @@
-class Ram {
+class Ram implements Component {
+  robot: Robot;
+  
   readonly size: number = 8;
 
   constructor(props: { size: number }) {

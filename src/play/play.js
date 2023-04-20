@@ -34,111 +34,12 @@ function play(floorPlan) {
   const body = document.querySelector("body");
   body.classList.replace("status=loading", "status=playing");
 
-  const robot = {
-    battery: undefined,
-
-    dustbox: {
-      capacity: Infinity,
-      amount: 0,
-    },
-
-    memory: undefined,
-
-    sensor: undefined,
-
-    direction: 100,
-    moving: false,
-    position: [1, 1],
-    rotation: 100,
-
-    connect(devices) {
-      Object.entries(devices).forEach(([bay, device]) => {
-        device.robot = this;
-        this[bay] = device;
-      });
-    },
-
-    emote(text) {
-      const tino = document.querySelector("#roberto .status");
-      const glyph = tino.innerText;
-      if (text == glyph) return;
-      tino.innerText = text;
-      if (this.battery.charge > 0)
-        setTimeout(() => {
-          tino.innerHTML = glyph;
-        }, 500);
-    },
-
-    rotate(side) {
-      this.moving = true;
-      this.battery.use();
-      switch (side) {
-        case LEFT:
-        case RIGHT:
-          this.rotation += side;
-          break;
-      }
-      this.direction = (this.rotation + 400) % 400;
-      const roberto = document.getElementById("roberto");
-      roberto.style.transform = `rotateZ(${this.rotation - 100}grad)`;
-      setTimeout(() => {
-        this.moving = false;
-      }, 1000);
-    },
-
-    look() {
-      this.sensor.look();
-    },
-
-    move(amount = Input.FORWARD) {
-      this.moving = true;
-      this.battery.use();
-      const newPosition = [...this.position];
-      switch ((this.direction + 400) % 400) {
-        case NORTH:
-          newPosition[1] = this.position[1] - amount;
-          break;
-        case EAST:
-          newPosition[0] = this.position[0] + amount;
-          break;
-        case SOUTH:
-          newPosition[1] = this.position[1] + amount;
-          break;
-        case WEST:
-          newPosition[0] = this.position[0] - amount;
-          break;
-      }
-      if (floorPlan[newPosition[1]][newPosition[0]] < 0) {
-        this.emote("X0");
-        console.error("BUMP! XO");
-        this.moving = false;
-        return;
-      }
-      this.position = newPosition;
-      setTimeout(() => {
-        this.moving = false;
-      }, 1000);
-    },
-
-    suck() {
-      const [x, y] = this.position;
-      let value = floorPlan[y][x];
-      value -= 0.1;
-      if (value >= 0) {
-        this.dustbox.amount += 0.1;
-        floorPlan[y][x] = value;
-      } else {
-        floorPlan[y][x] = 0;
-      }
-    },
-  };
-  setupRobot(robot);
+  const robot = buildRobot(floorPlan);
+  const input = new Input({ robot });
 
   // Globally visible aliases for interacting with the robot
   // via the browser's console
   tino = robertino = roberto = robot;
-
-  const input = new Input({ robot });
 
   run();
   function run() {
@@ -235,7 +136,7 @@ function play(floorPlan) {
       let dirt = tile.querySelector(".tile .dirt");
       if (dirt) {
         if (value > 0) dirt.style.opacity = value;
-        return
+        return;
       }
 
       dirt = document.createElement("div");
@@ -273,7 +174,7 @@ function play(floorPlan) {
   }
 }
 
-function setupRobot(robot) {
+function buildRobot(floorPlan) {
   const battery = new Battery({
     capacity: 100,
     charge: Infinity,
@@ -283,7 +184,14 @@ function setupRobot(robot) {
     size: GameConfiguration.memorySize,
   });
 
-  const sensor = SensorFactory.create(GameConfiguration.sensorType)
+  const sensor = Sensor.create(GameConfiguration.sensorType);
 
-  robot.connect({ battery, memory, sensor });
+  return Robot.create({
+    battery,
+    memory,
+    room: {
+      floorPlan,
+    },
+    sensor,
+  });
 }

@@ -1,8 +1,4 @@
-interface Sensor {
-  look();
-}
-
-class SensorFactory {
+class Sensor {
   static create(type: string) {
     switch (type) {
       case "laser":
@@ -12,44 +8,29 @@ class SensorFactory {
         return new BasicSensor();
     }
   }
+
+  detect() {}
 }
 
 class BasicSensor implements Sensor {
-  robot: any;
+  robot: Robot;
 
-  look() {
+  detect() {
     const position = [...this.robot.position];
 
-    const self = document.querySelector(`.x${position[0]}.y${position[1]}`);
-    self.classList.remove("fow");
-
-    const north = document.querySelector(
-      `.x${position[0]}.y${position[1] - 1}`
-    );
-    if (north && [0, 100, 300].includes(this.robot.direction)) {
-      north.classList.remove("fow");
-    }
-    const east = document.querySelector(`.x${position[0] + 1}.y${position[1]}`);
-    if (east && [0, 100, 200].includes(this.robot.direction)) {
-      east.classList.remove("fow");
-    }
-    const south = document.querySelector(
-      `.x${position[0]}.y${position[1] + 1}`
-    );
-    if (south && [100, 200, 300].includes(this.robot.direction)) {
-      south.classList.remove("fow");
-    }
-    const west = document.querySelector(`.x${position[0] - 1}.y${position[1]}`);
-    if (west && [0, 200, 300].includes(this.robot.direction)) {
-      west.classList.remove("fow");
+    for (let x = position[0] - 1; x <= position[0] + 1; x++) {
+      for (let y = position[1] - 1; y <= position[1] + 1; y++) {
+        const tile = document.querySelector(`.x${x}.y${y}`);
+        tile.classList.remove("fow");
+      }
     }
   }
 }
 
 class LaserSensor implements Sensor {
-  robot: any;
+  robot: Robot;
 
-  look() {
+  detect() {
     const position = [...this.robot.position];
     const startTile = document.querySelector(
       `.x${position[0]}.y${position[1]}`

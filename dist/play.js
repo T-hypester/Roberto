@@ -13,7 +13,7 @@ class Battery {
         this.charge = Math.max(this.charge - amt, 0);
     }
 }
-const GameConfiguration = {
+var GameConfiguration = {
     levelUrl: localStorage.getItem("level"),
     memorySize: parseInt(localStorage.getItem("ram")),
     sensorType: localStorage.getItem("sensor"),
@@ -22,7 +22,6 @@ const GameConfiguration = {
 class Input {
     constructor(ctx) {
         this.onKeyDown = (event) => {
-            //if (!this.keyUp) return;
             switch (event.key) {
                 case "ArrowRight":
                     this.input = Input.RIGHT;
@@ -45,7 +44,6 @@ class Input {
         };
         Object.assign(this, ctx);
         window.addEventListener("keydown", this.onKeyDown);
-        //window.addEventListener("keyup", this.onKeyUp);
     }
     run() {
         if (this.robot.moving)
@@ -105,101 +103,11 @@ function loadLevel() {
 function play(floorPlan) {
     const body = document.querySelector("body");
     body.classList.replace("status=loading", "status=playing");
-    const robot = {
-        battery: undefined,
-        dustbox: {
-            capacity: Infinity,
-            amount: 0,
-        },
-        memory: undefined,
-        sensor: undefined,
-        direction: 100,
-        moving: false,
-        position: [1, 1],
-        rotation: 100,
-        connect(devices) {
-            Object.entries(devices).forEach(([bay, device]) => {
-                device.robot = this;
-                this[bay] = device;
-            });
-        },
-        emote(text) {
-            const tino = document.querySelector("#roberto .status");
-            const glyph = tino.innerText;
-            if (text == glyph)
-                return;
-            tino.innerText = text;
-            if (this.battery.charge > 0)
-                setTimeout(() => {
-                    tino.innerHTML = glyph;
-                }, 500);
-        },
-        rotate(side) {
-            this.moving = true;
-            this.battery.use();
-            switch (side) {
-                case LEFT:
-                case RIGHT:
-                    this.rotation += side;
-                    break;
-            }
-            this.direction = (this.rotation + 400) % 400;
-            const roberto = document.getElementById("roberto");
-            roberto.style.transform = `rotateZ(${this.rotation - 100}grad)`;
-            setTimeout(() => {
-                this.moving = false;
-            }, 1000);
-        },
-        look() {
-            this.sensor.look();
-        },
-        move(amount = Input.FORWARD) {
-            this.moving = true;
-            this.battery.use();
-            const newPosition = [...this.position];
-            switch ((this.direction + 400) % 400) {
-                case NORTH:
-                    newPosition[1] = this.position[1] - amount;
-                    break;
-                case EAST:
-                    newPosition[0] = this.position[0] + amount;
-                    break;
-                case SOUTH:
-                    newPosition[1] = this.position[1] + amount;
-                    break;
-                case WEST:
-                    newPosition[0] = this.position[0] - amount;
-                    break;
-            }
-            if (floorPlan[newPosition[1]][newPosition[0]] < 0) {
-                this.emote("X0");
-                console.error("BUMP! XO");
-                this.moving = false;
-                return;
-            }
-            this.position = newPosition;
-            setTimeout(() => {
-                this.moving = false;
-            }, 1000);
-        },
-        suck() {
-            const [x, y] = this.position;
-            let value = floorPlan[y][x];
-            value -= 0.1;
-            if (value >= 0) {
-                this.dustbox.amount += 0.1;
-                floorPlan[y][x] = value;
-            }
-            else {
-                floorPlan[y][x] = 0;
-            }
-        },
-    };
-    setupRobot(robot);
+    const robot = buildRobot(floorPlan);
+    const input = new Input({ robot });
     // Globally visible aliases for interacting with the robot
     // via the browser's console
     tino = robertino = roberto = robot;
-    const input = new Input({ robot });
     run();
     function run() {
         renderRoom();
@@ -313,7 +221,7 @@ function play(floorPlan) {
         return val + 1 - (val % 2);
     }
 }
-function setupRobot(robot) {
+function buildRobot(floorPlan) {
     const battery = new Battery({
         capacity: 100,
         charge: Infinity,
@@ -321,10 +229,108 @@ function setupRobot(robot) {
     const memory = new Ram({
         size: GameConfiguration.memorySize,
     });
-    const sensor = SensorFactory.create(GameConfiguration.sensorType);
-    robot.connect({ battery, memory, sensor });
+    const sensor = Sensor.create(GameConfiguration.sensorType);
+    return Robot.create({
+        battery,
+        memory,
+        room: {
+            floorPlan,
+        },
+        sensor,
+    });
 }
-class SensorFactory {
+class Robot {
+    constructor() {
+        this.dustbox = {
+            capacity: Infinity,
+            amount: 0,
+        };
+        this.direction = 100;
+        this.moving = false;
+        this.position = [1, 1];
+        this.rotation = 100;
+    }
+    static create(components) {
+        const robot = new Robot();
+        Object.entries(components).forEach(([connector, component]) => {
+            component.robot = robot;
+            robot[connector] = component;
+        });
+        return robot;
+    }
+    emote(text) {
+        const status = document.querySelector("#roberto .status");
+        const glyph = status.innerText;
+        if (text == glyph)
+            return;
+        status.innerText = text;
+        if (this.battery.charge > 0)
+            setTimeout(() => {
+                status.innerHTML = glyph;
+            }, 500);
+    }
+    rotate(side) {
+        this.moving = true;
+        this.battery.use();
+        switch (side) {
+            case LEFT:
+            case RIGHT:
+                this.rotation += side;
+                break;
+        }
+        this.direction = (this.rotation + 400) % 400;
+        const roberto = document.getElementById("roberto");
+        roberto.style.transform = `rotateZ(${this.rotation - 100}grad)`;
+        setTimeout(() => {
+            this.moving = false;
+        }, 1000);
+    }
+    look() {
+        this.sensor.detect();
+    }
+    move(amount = Input.FORWARD) {
+        this.moving = true;
+        this.battery.use();
+        const newPosition = [...this.position];
+        switch ((this.direction + 400) % 400) {
+            case NORTH:
+                newPosition[1] = this.position[1] - amount;
+                break;
+            case EAST:
+                newPosition[0] = this.position[0] + amount;
+                break;
+            case SOUTH:
+                newPosition[1] = this.position[1] + amount;
+                break;
+            case WEST:
+                newPosition[0] = this.position[0] - amount;
+                break;
+        }
+        if (this.room.floorPlan[newPosition[1]][newPosition[0]] < 0) {
+            this.emote("X0");
+            console.error("BUMP! XO");
+            this.moving = false;
+            return;
+        }
+        this.position = newPosition;
+        setTimeout(() => {
+            this.moving = false;
+        }, 1000);
+    }
+    suck() {
+        const [x, y] = this.position;
+        let value = this.room.floorPlan[y][x];
+        value -= 0.1;
+        if (value >= 0) {
+            this.dustbox.amount += 0.1;
+            this.room.floorPlan[y][x] = value;
+        }
+        else {
+            this.room.floorPlan[y][x] = 0;
+        }
+    }
+}
+class Sensor {
     static create(type) {
         switch (type) {
             case "laser":
@@ -334,32 +340,21 @@ class SensorFactory {
                 return new BasicSensor();
         }
     }
+    detect() { }
 }
 class BasicSensor {
-    look() {
+    detect() {
         const position = [...this.robot.position];
-        const self = document.querySelector(`.x${position[0]}.y${position[1]}`);
-        self.classList.remove("fow");
-        const north = document.querySelector(`.x${position[0]}.y${position[1] - 1}`);
-        if (north && [0, 100, 300].includes(this.robot.direction)) {
-            north.classList.remove("fow");
-        }
-        const east = document.querySelector(`.x${position[0] + 1}.y${position[1]}`);
-        if (east && [0, 100, 200].includes(this.robot.direction)) {
-            east.classList.remove("fow");
-        }
-        const south = document.querySelector(`.x${position[0]}.y${position[1] + 1}`);
-        if (south && [100, 200, 300].includes(this.robot.direction)) {
-            south.classList.remove("fow");
-        }
-        const west = document.querySelector(`.x${position[0] - 1}.y${position[1]}`);
-        if (west && [0, 200, 300].includes(this.robot.direction)) {
-            west.classList.remove("fow");
+        for (let x = position[0] - 1; x <= position[0] + 1; x++) {
+            for (let y = position[1] - 1; y <= position[1] + 1; y++) {
+                const tile = document.querySelector(`.x${x}.y${y}`);
+                tile.classList.remove("fow");
+            }
         }
     }
 }
 class LaserSensor {
-    look() {
+    detect() {
         const position = [...this.robot.position];
         const startTile = document.querySelector(`.x${position[0]}.y${position[1]}`);
         startTile.classList.remove("fow");

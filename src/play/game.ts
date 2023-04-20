@@ -1,3 +1,7 @@
+interface Component {
+  robot: Robot
+}
+
 var GameConfiguration = {
   levelUrl: localStorage.getItem("level"),
   memorySize: parseInt(localStorage.getItem("ram")),
