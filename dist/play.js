@@ -293,9 +293,16 @@ function play(level) {
 }
 function setupRobot(tino) {
     tino.memory.size = parseInt(localStorage.getItem("ram"));
-    tino.sensor = new LaserSensor({
-        robot: tino,
-    });
+    if (localStorage.getItem("sensor") == "laser") {
+        tino.sensor = new LaserSensor({
+            robot: tino,
+        });
+    }
+    else {
+        tino.sensor = new BasicSensor({
+            robot: tino,
+        });
+    }
 }
 class BasicSensor {
     constructor(ctx) {
