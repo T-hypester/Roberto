@@ -1,11 +1,5 @@
 class BasicSensor {
-    private robot: any
-
-    constructor(ctx: {
-        robot: any
-    }) {
-        Object.assign(this, ctx)
-    }
+    robot: any
 
     look() {
         const position = [...this.robot.position];

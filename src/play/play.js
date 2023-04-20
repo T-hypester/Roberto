@@ -9,65 +9,57 @@ const LEFT = -100;
 const RIGHT = 100;
 
 function loadSkin() {
-  const url = new URL(location);
-  const skinOverride = localStorage.getItem("skin"); // url.searchParams.get("skin");
-  if (skinOverride) {
+  const href = GameConfiguration.skinUrl;
+  if (href) {
     const skin = document.querySelector("link#skin");
-    skin.href = decodeURIComponent(skinOverride);
+    skin.href = decodeURIComponent(href);
   }
 }
 
 function loadLevel() {
-  const url = new URL(location);
-  const levelUrl = localStorage.getItem("level"); //url.searchParams.get("level");
+  const src = GameConfiguration.levelUrl;
 
-  if (!levelUrl) {
+  if (!src) {
     alert("No level selected :(");
     throw new Error("No level! :?");
   }
 
   const levelScript = Object.assign(document.createElement("script"), {
-    src: levelUrl,
+    src,
   });
   document.body.appendChild(levelScript);
 }
 
 function play(level) {
   const body = document.querySelector("body");
-  body.classList.remove("status=loading");
-  body.classList.add("status=playing");
+  body.classList.replace("status=loading", "status=playing");
 
   tino =
     robertino =
     roberto =
       {
-        battery: {
-          capacity: 30,
-          charge: Infinity,
-          use(amt = 0.1) {
-            if (this.charge <= 0) {
-              const roberto = document.getElementById("roberto");
-              roberto.classList.add("battery");
-              tino.emote("X(");
-              throw new Error("No battery! X(");
-            }
-            this.charge = Math.max(this.charge - amt, 0);
-          },
-        },
+        battery: undefined,
 
         dustbox: {
           capacity: Infinity,
           amount: 0,
         },
 
-        memory: {
-          size: 8,
-        },
+        memory: undefined,
+
+        sensor: undefined,
 
         direction: 100,
         moving: false,
         position: [1, 1],
         rotation: 100,
+
+        connect(devices) {
+          Object.entries(devices).forEach(([bay, device]) => {
+            device.robot = this;
+            this[bay] = device;
+          });
+        },
 
         emote(text) {
           const tino = document.querySelector("#roberto .status");
@@ -234,7 +226,6 @@ function play(level) {
     }
 
     function getDirt(tile) {
-      const tileSize = getTileSize();
       let dirt = tile.querySelector(".tile .dirt");
       if (dirt) return dirt;
 
@@ -276,14 +267,19 @@ function play(level) {
 }
 
 function setupRobot(tino) {
-  tino.memory.size = parseInt(localStorage.getItem("ram"));
-  if(localStorage.getItem("sensor") == "laser"){
-    tino.sensor = new LaserSensor({
-      robot: tino,
-    });
+  const battery = new Battery({
+    capacity: 45,
+    charge: Infinity,
+  });
+
+  const memory = new Ram({
+    size: GameConfiguration.memorySize,
+  });
+  if(localStorage.getItem("sensor")){
+    const sensor = new LaserSensor();
   }else{
-    tino.sensor = new BasicSensor({
-      robot: tino,
-    });
+    const sensor = new BaseSensor();
   }
+
+  tino.connect({ battery, memory, sensor });
 }
