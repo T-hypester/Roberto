@@ -275,7 +275,7 @@ function play(floorPlan) {
 
 function setupRobot(robot) {
   const battery = new Battery({
-    capacity: 45,
+    capacity: 100,
     charge: Infinity,
   });
 
@@ -283,9 +283,7 @@ function setupRobot(robot) {
     size: GameConfiguration.memorySize,
   });
 
-  const sensor = localStorage.getItem("sensor")
-    ? new LaserSensor()
-    : new BaseSensor();
+  const sensor = SensorFactory.create(GameConfiguration.sensorType)
 
   robot.connect({ battery, memory, sensor });
 }

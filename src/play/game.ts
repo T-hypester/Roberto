@@ -1,5 +1,6 @@
-class GameConfiguration {
-  static levelUrl = localStorage.getItem("level");
-  static memorySize = parseInt(localStorage.getItem("ram"));
-  static skinUrl = localStorage.getItem("skin");
-}
+var GameConfiguration = {
+  levelUrl: localStorage.getItem("level"),
+  memorySize: parseInt(localStorage.getItem("ram")),
+  sensorType: localStorage.getItem("sensor"),
+  skinUrl: localStorage.getItem("skin"),
+};

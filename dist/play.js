@@ -13,11 +13,12 @@ class Battery {
         this.charge = Math.max(this.charge - amt, 0);
     }
 }
-class GameConfiguration {
-}
-GameConfiguration.levelUrl = localStorage.getItem("level");
-GameConfiguration.memorySize = parseInt(localStorage.getItem("ram"));
-GameConfiguration.skinUrl = localStorage.getItem("skin");
+const GameConfiguration = {
+    levelUrl: localStorage.getItem("level"),
+    memorySize: parseInt(localStorage.getItem("ram")),
+    sensorType: localStorage.getItem("sensor"),
+    skinUrl: localStorage.getItem("skin"),
+};
 class Input {
     constructor(ctx) {
         this.onKeyDown = (event) => {
@@ -72,7 +73,7 @@ Input.BACK = -1;
 class Ram {
     constructor(props) {
         this.size = 8;
-        this.size = Math.max(48, Math.max(8, props.size));
+        this.size = Math.min(48, Math.max(8, props.size));
     }
 }
 loadSkin();
@@ -314,16 +315,25 @@ function play(floorPlan) {
 }
 function setupRobot(robot) {
     const battery = new Battery({
-        capacity: 45,
+        capacity: 100,
         charge: Infinity,
     });
     const memory = new Ram({
         size: GameConfiguration.memorySize,
     });
-    const sensor = localStorage.getItem("sensor")
-        ? new LaserSensor()
-        : new BaseSensor();
+    const sensor = SensorFactory.create(GameConfiguration.sensorType);
     robot.connect({ battery, memory, sensor });
+}
+class SensorFactory {
+    static create(type) {
+        switch (type) {
+            case "laser":
+                return new LaserSensor();
+            default:
+            case "base":
+                return new BasicSensor();
+        }
+    }
 }
 class BasicSensor {
     look() {
@@ -349,9 +359,6 @@ class BasicSensor {
     }
 }
 class LaserSensor {
-    constructor(ctx) {
-        Object.assign(this, ctx);
-    }
     look() {
         const position = [...this.robot.position];
         const startTile = document.querySelector(`.x${position[0]}.y${position[1]}`);
