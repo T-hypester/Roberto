@@ -6,50 +6,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="icons/r.png" type="image/png" />
-    <link rel="stylesheet" href="popup.css">
+    <link rel="manifest" href="roberto.webmanifest" />
+    <link rel="stylesheet" href="index.css" />
     <script src="settings.js"></script>
     <script src="skinSystem.js"></script>
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&display=block");
-
-      :root {
-        background-color: black;
-      }
-
-      body {
-        opacity: 0;
-        transition: opacity 3s ease-in;
-      }
-
-      #splash {
-        align-items: center;
-        background-color: black;
-        display: flex;
-        height: 100vh;
-        position: absolute;
-        place-content: center;
-        right: 0;
-        width: 100vw;
-      }
-      #splash span.secondary {
-        opacity: 0;
-        transition: opacity 3s ease-in;
-      }
-      #splash h1 {
-        display: flex;
-        flex-direction: column;
-        margin: 0 auto;
-        text-align: center;
-      }
-      #splash h1 .primary {
-        font-family: "Bungee Spice", cursive;
-      }
-      #splash h1 .secondary {
-        font-family: "Nabla", cursive;
-      }
-    </style>
-    <link rel="stylesheet" href="index.css" />
-    <link rel="manifest" href="roberto.webmanifest" />
     <script src="index.js" defer></script>
   </head>
   <body onload="onInit()">

@@ -124,13 +124,14 @@ function play(floorPlan) {
         room,
     });
     tino = robertino = roberto = robot;
-    ui.render()(function run() {
-        input.run();
+    run();
+    function run() {
+        ui.render();
         robot.suck();
         robot.look();
-        ui.render();
+        input.run();
         requestAnimationFrame(run);
-    })();
+    }
 }
 class Robot {
     constructor() {
