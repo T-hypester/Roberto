@@ -14,7 +14,7 @@ class Robot {
 
   room: any;
 
-  static create(components: Record<keyof Robot, Component>) {
+  static create(components: Partial<Record<keyof Robot, Component>>) {
     const robot = new Robot();
     Object.entries(components).forEach(([connector, component]) => {
       component.robot = robot;

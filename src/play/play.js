@@ -8,6 +8,9 @@ const WEST = 300;
 const LEFT = -100;
 const RIGHT = 100;
 
+const body = document.querySelector("body");
+body.classList.replace("status=loading", "status=playing");
+
 function loadSkin() {
   const href = GameConfiguration.skinUrl;
   if (href) {
@@ -30,48 +33,15 @@ function loadLevel() {
   document.body.appendChild(levelScript);
 }
 
-function play(floorPlan) {
-  const body = document.querySelector("body");
-  body.classList.replace("status=loading", "status=playing");
-
-  const room = { floorPlan };
-
-  const battery = new Battery({
-    capacity: 100,
-    charge: Infinity,
-  });
-
-  const memory = new Ram({
-    size: GameConfiguration.memorySize,
-  });
-
-  const sensor = Sensor.create(GameConfiguration.sensorType);
-
-  const robot = Robot.create({
-    battery,
-    memory,
-    room,
-    sensor,
-  });
-  const input = new Input({ robot });
-
-  const ui = new Ui({
-    robot,
-    room,
-  });
-
-  tino = robertino = roberto = robot;
-
-  run();
-
-  function run() {
-    ui.render();
-
-    robot.suck();
-    robot.look();
-
-    input.run();
-
-    requestAnimationFrame(run);
+window.addEventListener("keyup", (event) => {
+  switch (event.key) {
+    case "Escape":
+      if (game.running) {
+        game.pause();
+        document.getElementById("menu").showModal();
+      } else {
+        game.play();
+      }
+      break;
   }
-}
+});

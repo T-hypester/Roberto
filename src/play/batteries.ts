@@ -4,7 +4,7 @@ class Battery implements Component {
   readonly capacity: number;
   charge = 0;
 
-  constructor(props: { capacity: number }) {
+  constructor(props: { capacity: number; charge?: number }) {
     Object.assign(this, props);
   }
 
