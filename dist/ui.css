@@ -1,13 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&display=block");
+
+:root {
+  --ui-color: limegreen;
+  --ui-background-color: black;
+  background-color: var(--ui-background-color);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-:root {
-  background-color: black;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+.font\=nabla {
+  font-family: Nabla, cursive;
 }
 
 .button,
@@ -15,7 +23,25 @@ button,
 input,
 select {
   background-color: transparent;
-  border: 2px solid limegreen;
-  color: limegreen;
+  border: 2px solid var(--ui-color);
+  color: var(--ui-color);
   padding: 1ex 1em;
+}
+a.button {
+  display: inline-block;
+  text-decoration: none;
+  transition: all 0.3s ease-out;
+}
+:focus {
+  box-shadow: 0 0 2px 2px var(--ui-color);
+  outline: none;
+}
+a.button:hover {
+  background: var(--ui-color);
+  color: var(--ui-background-color);
+}
+
+dialog {
+  background: var(--ui-background-color);
+  color: var(--ui-color);
 }

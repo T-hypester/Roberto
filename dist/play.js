@@ -19,6 +19,52 @@ var GameConfiguration = {
     sensorType: localStorage.getItem("sensor"),
     skinUrl: localStorage.getItem("skin"),
 };
+var game;
+class Game {
+    static start(floorPlan) {
+        game = new Game({ room: { floorPlan } });
+        game.play();
+    }
+    constructor(conf) {
+        this.room = { floorPlan: undefined };
+        this.running = false;
+        this.onAnimationFrame = () => {
+            this.ui.render();
+            this.robot.suck();
+            this.robot.look();
+            this.input.run();
+            if (this.running)
+                requestAnimationFrame(this.onAnimationFrame);
+        };
+        Object.assign(this, conf);
+        this.battery = new Battery({
+            capacity: 100,
+            charge: Infinity,
+        });
+        this.memory = new Ram({
+            size: GameConfiguration.memorySize,
+        });
+        this.sensor = Sensor.create(GameConfiguration.sensorType);
+        this.robot = Robot.create({
+            battery: this.battery,
+            memory: this.memory,
+            room: this.room,
+            sensor: this.sensor,
+        });
+        this.input = new Input({ robot: this.robot });
+        this.ui = new Ui({
+            robot: this.robot,
+            room: this.room,
+        });
+    }
+    play() {
+        this.running = true;
+        this.onAnimationFrame();
+    }
+    pause() {
+        this.running = false;
+    }
+}
 class Input {
     constructor(ctx) {
         this.onKeyDown = (event) => {
@@ -82,6 +128,8 @@ const SOUTH = 200;
 const WEST = 300;
 const LEFT = -100;
 const RIGHT = 100;
+const body = document.querySelector("body");
+body.classList.replace("status=loading", "status=playing");
 function loadSkin() {
     const href = GameConfiguration.skinUrl;
     if (href) {
@@ -100,39 +148,19 @@ function loadLevel() {
     });
     document.body.appendChild(levelScript);
 }
-function play(floorPlan) {
-    const body = document.querySelector("body");
-    body.classList.replace("status=loading", "status=playing");
-    const room = { floorPlan };
-    const battery = new Battery({
-        capacity: 100,
-        charge: Infinity,
-    });
-    const memory = new Ram({
-        size: GameConfiguration.memorySize,
-    });
-    const sensor = Sensor.create(GameConfiguration.sensorType);
-    const robot = Robot.create({
-        battery,
-        memory,
-        room,
-        sensor,
-    });
-    const input = new Input({ robot });
-    const ui = new Ui({
-        robot,
-        room,
-    });
-    tino = robertino = roberto = robot;
-    run();
-    function run() {
-        ui.render();
-        robot.suck();
-        robot.look();
-        input.run();
-        requestAnimationFrame(run);
+window.addEventListener("keyup", (event) => {
+    switch (event.key) {
+        case "Escape":
+            if (game.running) {
+                game.pause();
+                document.getElementById("menu").showModal();
+            }
+            else {
+                game.play();
+            }
+            break;
     }
-}
+});
 class Robot {
     constructor() {
         this.dustbox = {

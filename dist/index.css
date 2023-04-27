@@ -1,8 +1,6 @@
 @import url(ui.css);
 @import url(popup.css);
 
-@import url("https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&display=block");
-
 body {
   color: orange;
   opacity: 1;

@@ -126,6 +126,19 @@ body.status\=playing #viewport {
   top: 0;
 }
 
+#menu {
+  margin: 50vh auto;
+  min-width: 20vw;
+  padding: 1ex 1em;
+  position: relative;
+  text-align: center;
+  top: -80px;
+}
+#menu h2 {
+  font-family: Nabla, cursive;
+  font-size: 60px;
+}
+
 #room {
   position: relative;
 }
