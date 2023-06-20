@@ -1,0 +1,11 @@
+{
+  "name": "main",
+  "version": "0.0.1",
+  "description": "Game main screen",
+  "main": "settings.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsc"
+  }
+}

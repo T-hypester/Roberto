@@ -1,13 +1,13 @@
 @import url(ui.css);
 
-#configuration {
+main {
   align-items: center;
   display: flex;
   place-content: center;
   width: 100vw;
 }
 
-#configuration form {
+main form {
   align-items: center;
   display: grid;
   gap: 1ex;
