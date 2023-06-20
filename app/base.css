@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&family=VT323&display=block");
+
+:root {
+  --background-color: black;
+  --font-mono: "VT323";
+  --font-title: "Bungee Spice";
+  --font-heading: "Nabla";
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--background-color);
+}
+
+.font\=nabla {
+  font-family: Nabla, cursive;
+}

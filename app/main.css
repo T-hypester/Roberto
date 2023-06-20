@@ -1,0 +1,15 @@
+@import url(ui.css);
+
+#configuration {
+  align-items: center;
+  display: flex;
+  place-content: center;
+  width: 100vw;
+}
+
+#configuration form {
+  align-items: center;
+  display: grid;
+  gap: 1ex;
+  grid-template-columns: 1fr 1fr;
+}

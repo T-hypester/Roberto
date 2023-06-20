@@ -8,82 +8,36 @@
     <link rel="icon" href="icons/r.png" type="image/png" />
     <link rel="manifest" href="roberto.webmanifest" />
     <link rel="stylesheet" href="index.css" />
-    <script src="settings.js"></script>
-    <script src="skinSystem.js"></script>
-    <script src="index.js" defer></script>
   </head>
-  <body onload="onInit()">
-    <header id="splash">
+  <body>
+    <main id="splash">
       <h1>
         <span
           class="secondary"
           style="letter-spacing: 0.03em"
           data-content="Le avventure di"
         ></span>
-        <span
-          class="primary"
-          style="font-size: 156%"Z
-          data-content="Roberto"
-        ></span>
+        <span class="primary" style="font-size: 156%">Roberto</span>
         <span class="secondary" data-content="Il robot esperto"></span>
       </h1>
-    </header>
-    <section id="configuration">
-      <form action="./play.html" method="GET">
+    </main>
 
-        <label for="skin">Skin</label>
-        <div style="height: 4rem; width: 4rem; background-color: black; border: 2px solid limegreen;" onclick="location.href='#skinsel'">
-          <link id="skincss" rel="stylesheet" href="">
-          <div id="roberto" class="robot" style="height: 2rem; width: 2rem; margin: 0.5rem; outline: 2px solid white;">
-          <h1 style="text-align: center;">: )</h1>
-          </div>
-        </div>
-
-        <div id="skinsel" class="overlay">
-          <div class="popup" style="background-color: rgb(32, 32, 32);">
-            <h2 style="color: limegreen;">Skin selector</h2>
-            <a class="close" href="#">&times;</a>
-            <div class="content">
-              <select name="skin" id="skinmenu" size="5" style="width: 100%; margin-top: 2rem;">
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <label for="level">Room</label>
-        <select id="level" name="level">
-          <option value="levels/tutorial.js">Tutorial</option>
-          <option value="levels/room-1.js">Room 1</option>
-          <option value="levels/room-2.js">Room 2</option>
-          <option value="levels/room-template.js">Empty Room</option>
-        </select>
-
-        <label for="settings">settings</label>
-        <a id="settings" class="button" href="upgrades.html">Go</a>
-        
-        &nbsp;
-        <button onclick="saveSettings()" type="submit">Play</button>
-      </form>
-    </section>
     <script>
-      function onInit(){
-        loadSkins();
-        loadSettings();
-        setdivskin();
-      }
+      window.onload = () => {
+        const splash = document.getElementById("splash");
+        splash.classList.add("animate");
 
-      window.addEventListener("load", () => {
-        document.querySelectorAll("#splash h1 > span").forEach((el) => {
-          el.innerText = el.dataset["content"];
-          el.classList.add("loaded");
-          console.info("loaded", el);
-        });
-      });
-      /* if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("sw.js").then(() => {
-          console.log("Service Worker Registered");
-        });
-      } */
+        setTimeout(() => {
+          document.querySelectorAll("#splash h1 > span").forEach((el) => {
+            el.innerText = el.dataset["content"] || el.innerText;
+            el.classList.add("visible");
+          });
+
+          splash.onclick = () => {
+            location.assign("/main");
+          };
+        }, 3000);
+      };
     </script>
   </body>
 </html>

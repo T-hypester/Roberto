@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Roberto - Configuration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" href="icons/r.png" type="image/png" />
+    <link rel="manifest" href="roberto.webmanifest" />
+    <link rel="stylesheet" href="main.css" />
+    <script src="settings.js"></script>
+    <script src="skinSystem.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Configuration</h1>
+    </header>
+
+    <main id="configuration">
+      <form action="./play.html" method="GET">
+        <label for="skin">Skin</label>
+        <div
+          style="
+            height: 4rem;
+            width: 4rem;
+            background-color: black;
+            border: 2px solid limegreen;
+          "
+          onclick="location.href='#skinsel'"
+        >
+          <link id="skincss" rel="stylesheet" href="" />
+          <div
+            id="roberto"
+            class="robot"
+            style="
+              height: 3rem;
+              width: 3rem;
+              margin: 0.4rem;
+              outline: 2px solid white;
+            "
+          >
+            <div style="font-size: 1.7rem; text-align: center">: )</div>
+          </div>
+        </div>
+
+        <div id="skinsel" class="overlay">
+          <div class="popup" style="background-color: rgb(32, 32, 32)">
+            <h2>Skin selector</h2>
+            <a class="close" href="#">&times;</a>
+            <div class="content">
+              <select
+                name="skin"
+                id="skinmenu"
+                size="5"
+                style="width: 100%; margin-top: 2rem"
+              ></select>
+            </div>
+          </div>
+        </div>
+
+        <label for="level">Room</label>
+        <select id="level" name="level">
+          <option value="levels/tutorial.js">Tutorial</option>
+          <option value="levels/room-1.js">Room 1</option>
+          <option value="levels/room-2.js">Room 2</option>
+          <option value="levels/room-template.js">Empty Room</option>
+        </select>
+
+        <label for="settings">Upgrades</label>
+        <a id="settings" class="button" href="upgrades.html">Go</a>
+
+        &nbsp;
+        <button onclick="saveSettings()" type="submit">Play</button>
+      </form>
+    </main>
+
+    <script>
+      window.onload = () => {
+        loadSkins();
+        loadSettings();
+        setdivskin();
+      };
+    </script>
+  </body>
+</html>

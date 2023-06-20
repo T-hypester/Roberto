@@ -1,45 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="icons/r.png" type="image/png" />
     <link rel="stylesheet" href="ui.css" type="text/css" />
-    <title>Robot Upgrades</title>
-</head>
-<body style="background-color: black;" onload="restoreSettings()">
-    <H1 style="text-align: center; margin: 1rem; font-family: Nabla, cursive; font-size: 300%">Upgrades</H1>
-    <div style="width: 100%; overflow: hidden;">
-        <div style="float: left; width: 33%;">
-            <h1 style="font-family: Nabla, cursive; text-align: center; margin-bottom: 3rem;">Sensors</h1>
-            <select id="sensor" style="background-color: black; border: 2px solid yellow; width: 20rem; height: 14rem; margin: auto; color: yellow; overflow-y: auto;" multiple>
-                <option value="base" style="color: yellow;">base</option>
-                <option value="laser" style="color: yellow;">laser</option>
-            </select>
-        </div>
-        <div style="float: right; width: 33%;">
-            <h1 style="font-family: Nabla, cursive; text-align: center; margin-bottom: 3rem;">Ram</h1>
-            <select id="ram" style="background-color: black; border: 2px solid yellow; width: 20rem; height: 14rem; margin: auto; color: yellow; overflow-y: auto;" multiple>
-                <option value="8" style="color: yellow;">8 Mb</option>
-                <option value="24" style="color: yellow;">24 Mb</option>
-                <option value="48" style="color: yellow;">48 Mb</option>
-            </select>
-        </div>
-        <div style="text-align: center; margin-top: 25rem;">
-            <button onclick="applySettings()">SAVE</button>
-        </div>
+    <title>Roberto - Upgrades</title>
+  </head>
+  <body style="background-color: black" onload="restoreSettings()">
+    <header>
+      <h1>Upgrades</h1>
+    </header>
+    <div style="width: 100%; overflow: hidden">
+      <div style="float: left; width: 33%">
+        <h2 style="text-align: center">Sensors</h2>
+        <select
+          id="sensor"
+          style="
+            background-color: black;
+            border: 2px solid yellow;
+            width: 20rem;
+            height: 14rem;
+            margin: auto;
+            color: yellow;
+            overflow-y: auto;
+          "
+          multiple
+        >
+          <option value="base" style="color: yellow">base</option>
+          <option value="laser" style="color: yellow">laser</option>
+        </select>
+      </div>
+      <div style="float: right; width: 33%">
+        <h2 style="text-align: center">Ram</h2>
+        <select
+          id="ram"
+          style="
+            background-color: black;
+            border: 2px solid yellow;
+            width: 20rem;
+            height: 14rem;
+            margin: auto;
+            color: yellow;
+            overflow-y: auto;
+          "
+          multiple
+        >
+          <option value="8" style="color: yellow">8 Mb</option>
+          <option value="24" style="color: yellow">24 Mb</option>
+          <option value="48" style="color: yellow">48 Mb</option>
+        </select>
+      </div>
+      <div style="text-align: center; margin-top: 25rem">
+        <button onclick="applySettings()">SAVE</button>
+      </div>
     </div>
     <script>
-        function applySettings(){
-            localStorage.setItem("sensor", document.getElementById("sensor").value);
-            localStorage.setItem("ram", document.getElementById("ram").value);
-            window.location.assign("./")
-        }
-        function restoreSettings(){
-            document.getElementById("ram").value = localStorage.getItem("ram");
-            document.getElementById("sensor").value = localStorage.getItem("sensor");
-        }
+      function applySettings() {
+        localStorage.setItem("sensor", document.getElementById("sensor").value);
+        localStorage.setItem("ram", document.getElementById("ram").value);
+        location.assign("main.html");
+      }
+      function restoreSettings() {
+        document.getElementById("ram").value = localStorage.getItem("ram");
+        document.getElementById("sensor").value =
+          localStorage.getItem("sensor");
+      }
     </script>
-</body>
+  </body>
 </html>

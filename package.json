@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "serve dist/"
+    "start": "serve app/"
   },
   "devDependencies": {
     "lerna": "^6.6.2",

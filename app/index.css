@@ -1,38 +1,18 @@
-@import url(ui.css);
-@import url(popup.css);
-
-body {
-  color: orange;
-  opacity: 1;
-  transition: opacity 3s ease-in;
-}
-
-#configuration {
-  align-items: center;
-  color: limegreen;
-  display: flex;
-  min-height: 100vh;
-  place-content: center;
-  width: 100vw;
-}
-#configuration form {
-  align-items: center;
-  display: grid;
-  gap: 1ex;
-  grid-template-columns: 1fr 1fr;
-}
+@import url(base.css);
 
 #splash {
   align-items: center;
   background-color: black;
   display: flex;
   height: 100vh;
+  overflow: hidden;
   position: absolute;
   place-content: center;
-  right: 0;
+  top: -100%;
+  transition: top 3s ease-out;
   width: 100vw;
 }
-#splash span.secondary {
+#splash .secondary {
   opacity: 0;
   transition: opacity 3s ease-in;
 }
@@ -48,10 +28,9 @@ body {
 #splash h1 .secondary {
   font-family: "Nabla", cursive;
 }
-#splash span.secondary.loaded {
+#splash .secondary.visible {
   opacity: 1;
 }
-#splash.clicked {
-  height: 13em;
-  transition: height 1s cubic-bezier(0.42, 0, 1, 0.8);
+#splash.animate {
+  top: 0;
 }
