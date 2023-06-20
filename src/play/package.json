@@ -1,0 +1,11 @@
+{
+  "name": "play",
+  "version": "0.0.1",
+  "description": "Game play screen",
+  "main": "play.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsc"
+  }
+}
