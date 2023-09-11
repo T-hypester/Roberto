@@ -12,7 +12,7 @@ var GameConfiguration = {
 var game: Game;
 
 class Game {
-  private input: Input;
+  private input: KeyboardInput;
   private room = { floorPlan: undefined };
   private ui: Ui;
 
@@ -49,7 +49,7 @@ class Game {
       sensor: this.sensor,
     });
 
-    this.input = new Input({ robot: this.robot });
+    this.input = new KeyboardInput({ robot: this.robot });
 
     this.ui = new Ui({
       robot: this.robot,

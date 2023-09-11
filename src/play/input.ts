@@ -1,9 +1,11 @@
-class Input implements Component {
-  static LEFT = -100;
-  static FORWARD = +1;
-  static RIGHT = 100;
-  static BACK = -1;
+enum Motion {
+  LEFT = -100,
+  FORWARD = +1,
+  RIGHT = 100,
+  BACK = -1,
+}
 
+class KeyboardInput implements Component {
   robot: Robot;
 
   private input?: number;
@@ -19,12 +21,12 @@ class Input implements Component {
     this.input = undefined;
     if (!dir) return;
     switch (dir) {
-      case Input.FORWARD:
-      case Input.BACK:
+      case Motion.FORWARD:
+      case Motion.BACK:
         this.robot.move(dir);
         break;
-      case Input.LEFT:
-      case Input.RIGHT:
+      case Motion.LEFT:
+      case Motion.RIGHT:
         this.robot.rotate(dir);
         break;
     }
@@ -33,22 +35,21 @@ class Input implements Component {
   private onKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
       case "ArrowRight":
-        this.input = Input.RIGHT;
+        this.input = Motion.RIGHT;
         break;
       case "ArrowLeft":
-        this.input = Input.LEFT;
+        this.input = Motion.LEFT;
         break;
       case "ArrowUp":
-        this.input = Input.FORWARD;
+        this.input = Motion.FORWARD;
         break;
       case "ArrowDown":
-        this.input = Input.BACK;
+        this.input = Motion.BACK;
         break;
       default:
         this.input = undefined;
         return;
     }
-    //this.keyUp = false;
     event.preventDefault();
   };
 }

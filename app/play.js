@@ -51,7 +51,7 @@ class Game {
             room: this.room,
             sensor: this.sensor,
         });
-        this.input = new Input({ robot: this.robot });
+        this.input = new KeyboardInput({ robot: this.robot });
         this.ui = new Ui({
             robot: this.robot,
             room: this.room,
@@ -65,27 +65,33 @@ class Game {
         this.running = false;
     }
 }
-class Input {
+var Motion;
+(function (Motion) {
+    Motion[Motion["LEFT"] = -100] = "LEFT";
+    Motion[Motion["FORWARD"] = 1] = "FORWARD";
+    Motion[Motion["RIGHT"] = 100] = "RIGHT";
+    Motion[Motion["BACK"] = -1] = "BACK";
+})(Motion || (Motion = {}));
+class KeyboardInput {
     constructor(ctx) {
         this.onKeyDown = (event) => {
             switch (event.key) {
                 case "ArrowRight":
-                    this.input = Input.RIGHT;
+                    this.input = Motion.RIGHT;
                     break;
                 case "ArrowLeft":
-                    this.input = Input.LEFT;
+                    this.input = Motion.LEFT;
                     break;
                 case "ArrowUp":
-                    this.input = Input.FORWARD;
+                    this.input = Motion.FORWARD;
                     break;
                 case "ArrowDown":
-                    this.input = Input.BACK;
+                    this.input = Motion.BACK;
                     break;
                 default:
                     this.input = undefined;
                     return;
             }
-            //this.keyUp = false;
             event.preventDefault();
         };
         Object.assign(this, ctx);
@@ -99,21 +105,17 @@ class Input {
         if (!dir)
             return;
         switch (dir) {
-            case Input.FORWARD:
-            case Input.BACK:
+            case Motion.FORWARD:
+            case Motion.BACK:
                 this.robot.move(dir);
                 break;
-            case Input.LEFT:
-            case Input.RIGHT:
+            case Motion.LEFT:
+            case Motion.RIGHT:
                 this.robot.rotate(dir);
                 break;
         }
     }
 }
-Input.LEFT = -100;
-Input.FORWARD = +1;
-Input.RIGHT = 100;
-Input.BACK = -1;
 class Ram {
     constructor(props) {
         this.size = 8;
@@ -210,7 +212,7 @@ class Robot {
     look() {
         this.sensor.detect();
     }
-    move(amount = Input.FORWARD) {
+    move(amount = Motion.FORWARD) {
         this.moving = true;
         this.battery.use();
         const newPosition = [...this.position];

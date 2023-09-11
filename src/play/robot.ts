@@ -55,7 +55,7 @@ class Robot {
     this.sensor.detect();
   }
 
-  move(amount = Input.FORWARD) {
+  move(amount = Motion.FORWARD) {
     this.moving = true;
     this.battery.use();
     const newPosition = [...this.position];
